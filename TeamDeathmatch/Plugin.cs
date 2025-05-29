@@ -24,17 +24,41 @@ namespace TeamDeathmatch
         private List<Player> waitingPlayers = new();
         private bool tdmStarted = false;
 
-        private void OnVerified(VerifiedEventArgs ev)
+        public void OnVerified(VerifiedEventArgs ev)
         {
-            if (tdmStarted)
+            if (!tdmStarted)
+            {
+                waitingPlayers.Add(ev.Player);
+                ev.Player.Broadcast(5, $"대기 중... ({waitingPlayers.Count}/10)");
+                if (waitingPlayers.Count == 10)
+                    StartTdm();
                 return;
+            }
 
-            waitingPlayers.Add(ev.Player);
-            ev.Player.Broadcast(5, $"대기 중... ({waitingPlayers.Count}/10)");
+            string team;
+            if (team1.Count <= team2.Count)
+            {
+                team = "Team1";
+                team1.Add(ev.Player);
+                ev.Player.Role.Set(RoleTypeId.NtfSergeant);
+            }
+            else
+            {
+                team = "Team2";
+                team2.Add(ev.Player);
+                ev.Player.Role.Set(RoleTypeId.ChaosRifleman);
+            }
 
-            if (waitingPlayers.Count == 10)
-                StartTdm();
+            playerTeams[ev.Player] = team;
+            ev.Player.Broadcast(5, $"게임 도중 참가: {team} 팀에 배정되었습니다.");
+            Timing.CallDelayed(1f, () =>
+            {
+                ev.Player.ClearInventory();
+                GiveLoadout(ev.Player);
+                ev.Player.Position = GetSpawnPointForTeam(team);
+            });
         }
+
         private List<Player> team1 = new();
         private List<Player> team2 = new();
         List<CustomRole> MtfRoles = new();
@@ -169,7 +193,29 @@ namespace TeamDeathmatch
             else
                 return new Vector3(50, 300, 0);
         }
+        
+        public void OnLeft(LeftEventArgs ev)
+        {
+            if (!tdmStarted) return;
 
+            // 플레이어 리스트에서 제거
+            waitingPlayers.Remove(ev.Player);
+            team1.Remove(ev.Player);
+            team2.Remove(ev.Player);
+            playerTeams.Remove(ev.Player);
+
+            int alive = team1.Count + team2.Count;
+
+            if (alive <= 2)
+            {
+                tdmStarted = false;
+                Round.IsLocked = false;
+                Map.Broadcast(10, "⚠️ 플레이어 수 부족으로 라운드를 종료합니다!");
+                Timing.CallDelayed(5f, () => Round.Restart());
+            }
+        }
+
+        
         public override void OnEnabled()
         {
             Exiled.Events.Handlers.Player.Verified += OnVerified;
