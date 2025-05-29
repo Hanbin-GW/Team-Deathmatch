@@ -91,12 +91,10 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Commands\ScoreCommand.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Handlers\" />
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />

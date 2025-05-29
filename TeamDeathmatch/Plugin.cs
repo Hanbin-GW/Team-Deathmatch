@@ -22,11 +22,11 @@ namespace TeamDeathmatch
         
         private Dictionary<Player, string> playerTeams = new();
         private List<Player> waitingPlayers = new();
-        private bool tdmStarted = false;
-
+        public bool TdmStarted = false;
+        public static Plugin Instance { get; private set; }
         public void OnVerified(VerifiedEventArgs ev)
         {
-            if (!tdmStarted)
+            if (!TdmStarted)
             {
                 waitingPlayers.Add(ev.Player);
                 ev.Player.Broadcast(5, $"대기 중... ({waitingPlayers.Count}/10)");
@@ -63,7 +63,7 @@ namespace TeamDeathmatch
         private List<Player> team2 = new();
         List<CustomRole> MtfRoles = new();
         List<CustomRole> ChaosRoles = new();
-        private Dictionary<string, int> teamScores = new();
+        public Dictionary<string, int> TeamScores = new();
         
         private bool TryAssignRandomCustomRole(Player player)
         {
@@ -90,11 +90,11 @@ namespace TeamDeathmatch
 
         private void StartTdm()
         {
-            tdmStarted = true;
+            TdmStarted = true;
             Round.IsLocked = true;
             Round.Start();
-            teamScores["Team1"] = 0;
-            teamScores["Team2"] = 0;
+            TeamScores["Team1"] = 0;
+            TeamScores["Team2"] = 0;
 
             var shuffled = waitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
 
@@ -121,7 +121,7 @@ namespace TeamDeathmatch
         
         public void OnPlayerDied(DiedEventArgs ev)
         {
-            if (!tdmStarted) return;
+            if (!TdmStarted) return;
 
             string team;
             if (!playerTeams.TryGetValue(ev.Player, out team))
@@ -136,7 +136,7 @@ namespace TeamDeathmatch
                 GiveLoadout(ev.Player);
                 ev.Player.Position = GetSpawnPointForTeam(team); // 팀별 스폰 지점 지정
             });
-            if (teamScores[team] >= 30)
+            if (TeamScores[team] >= 30)
             {
                 EndTdm(team);
             }
@@ -194,9 +194,34 @@ namespace TeamDeathmatch
                 return new Vector3(50, 300, 0);
         }
         
+        private void LoadTeamRoles()
+        {
+            MtfRoles.Clear();
+            ChaosRoles.Clear();
+
+            foreach (var role in CustomRole.Registered)
+            {
+                if (role is ICustomRole custom)
+                {
+                    switch (custom.StartTeam)
+                    {
+                        case StartTeam.Ntf:
+                            MtfRoles.Add(role);
+                            break;
+                        case StartTeam.Chaos:
+                            ChaosRoles.Add(role);
+                            break;
+                    }
+                }
+            }
+
+            Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
+        }
+
+        
         public void OnLeft(LeftEventArgs ev)
         {
-            if (!tdmStarted) return;
+            if (!TdmStarted) return;
 
             // 플레이어 리스트에서 제거
             waitingPlayers.Remove(ev.Player);
@@ -208,7 +233,7 @@ namespace TeamDeathmatch
 
             if (alive <= 2)
             {
-                tdmStarted = false;
+                TdmStarted = false;
                 Round.IsLocked = false;
                 Map.Broadcast(10, "⚠️ 플레이어 수 부족으로 라운드를 종료합니다!");
                 Timing.CallDelayed(5f, () => Round.Restart());
@@ -218,6 +243,7 @@ namespace TeamDeathmatch
         
         public override void OnEnabled()
         {
+            Instance = this;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             base.OnEnabled();
         }
@@ -226,6 +252,7 @@ namespace TeamDeathmatch
         {
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             base.OnDisabled();
+            Instance = null;
         }
     }
 }
