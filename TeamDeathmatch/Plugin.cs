@@ -18,7 +18,7 @@ namespace TeamDeathmatch
 
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(1, 0, 2);
+        public override Version Version { get; } = new Version(1, 0, 3);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> waitingPlayers = new();
@@ -32,9 +32,9 @@ namespace TeamDeathmatch
                 if (!waitingPlayers.Contains(ev.Player))
                     waitingPlayers.Add(ev.Player);
 
-                ev.Player.Broadcast(5, $"TDM 대기 중... ({waitingPlayers.Count}/10)");
+                ev.Player.Broadcast(5, $"TDM 대기 중... ({waitingPlayers.Count}/{Config.TeamSize * 2})");
 
-                if (waitingPlayers.Count >= 10)
+                if (waitingPlayers.Count >= Config.TeamSize * 2)
                     StartTdm();
 
                 return;
@@ -102,7 +102,7 @@ namespace TeamDeathmatch
 
             var shuffled = waitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < Config.TeamSize; i++)
             {
                 var p = shuffled[i];
                 p.Role.Set(RoleTypeId.NtfSergeant);
@@ -115,7 +115,7 @@ namespace TeamDeathmatch
                 p.Broadcast(5, "당신은 NTF 팀입니다!");
             }
 
-            for (int i = 5; i < 10; i++)
+            for (int i = 5; i < Config.TeamSize; i++)
             {
                 var p = shuffled[i];
                 p.Role.Set(RoleTypeId.ChaosRifleman);
