@@ -4,7 +4,7 @@ using Exiled.API.Features;
 
 namespace TeamDeathmatch.Commands
 {
-    [CommandHandler(typeof(ClientCommandHandler))]
+    [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class StartTdmCommand : ICommand
     {
         public string Command => "startdm";
