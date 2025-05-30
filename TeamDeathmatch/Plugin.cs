@@ -18,7 +18,7 @@ namespace TeamDeathmatch
 
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(1, 0, 0);
+        public override Version Version { get; } = new Version(1, 0, 1);
         
         private Dictionary<Player, string> playerTeams = new();
         private List<Player> waitingPlayers = new();
@@ -67,14 +67,12 @@ namespace TeamDeathmatch
         
         private bool TryAssignRandomCustomRole(Player player)
         {
-            List<CustomRole> source = null;
+            if (!playerTeams.TryGetValue(player, out var team))
+                return false;
 
-            if (player.Role.Team == Team.FoundationForces)
-                source = MtfRoles;
-            else if (player.Role.Team == Team.ChaosInsurgency)
-                source = ChaosRoles;
+            List<CustomRole> source = team == "Team1" ? MtfRoles : ChaosRoles;
 
-            if (source == null || source.Count == 0)
+            if (source.Count == 0)
                 return false;
 
             int index = UnityEngine.Random.Range(0, source.Count);
@@ -86,6 +84,7 @@ namespace TeamDeathmatch
             selected.AddRole(player);
             return true;
         }
+
 
 
         private void StartTdm()
@@ -102,6 +101,10 @@ namespace TeamDeathmatch
             {
                 var p = shuffled[i];
                 p.Role.Set(RoleTypeId.NtfSergeant);
+                Timing.CallDelayed(0.1f, () =>
+                {
+                    Log.Info($"[{p.Nickname}] 팀 확인: {p.Role.Team}");
+                });
                 team1.Add(p);
                 playerTeams[p] = "Team1"; 
                 p.Broadcast(5, "당신은 NTF 팀입니다!");
@@ -244,13 +247,19 @@ namespace TeamDeathmatch
         public override void OnEnabled()
         {
             Instance = this;
+            Round.IsLocked = true;
+            LoadTeamRoles();
             Exiled.Events.Handlers.Player.Verified += OnVerified;
+            Exiled.Events.Handlers.Player.Died += OnPlayerDied;
+            Exiled.Events.Handlers.Player.Left += OnLeft;
             base.OnEnabled();
         }
 
         public override void OnDisabled()
         {
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
+            Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
+            Exiled.Events.Handlers.Player.Left -= OnLeft;
             base.OnDisabled();
             Instance = null;
         }
