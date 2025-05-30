@@ -20,8 +20,8 @@ namespace TeamDeathmatch
         public override string Author => "Hanbin-GW";
         public override Version Version { get; } = new Version(1, 0, 1);
         
-        private Dictionary<Player, string> playerTeams = new();
-        private List<Player> waitingPlayers = new();
+        public Dictionary<Player, string> playerTeams = new();
+        public List<Player> waitingPlayers = new();
         public bool TdmStarted = false;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
@@ -92,7 +92,7 @@ namespace TeamDeathmatch
 
 
 
-        private void StartTdm()
+        public void StartTdm()
         {
             TdmStarted = true;
             Round.IsLocked = true;
@@ -152,13 +152,37 @@ namespace TeamDeathmatch
         
         public void OnRoundStarted()
         {
+            if (TdmStarted)
+                return;
+
+            // 모든 플레이어를 대기열에 추가
             waitingPlayers.Clear();
             team1.Clear();
             team2.Clear();
             playerTeams.Clear();
-            TdmStarted = false;
 
-            Log.Info("[TDM] 라운드가 시작되었습니다. TDM 준비 대기중...");
+            foreach (var p in Player.List)
+            {
+                if (p.Role.Team is Team.FoundationForces or Team.ChaosInsurgency)
+                {
+                    waitingPlayers.Add(p);
+                }
+                else
+                {
+                    // SCP / D-Class / Scientist → Spectator로 전환 또는 제거
+                    p.Role.Set(RoleTypeId.Spectator);
+                    p.Broadcast(5, "TDM 모드에서는 SCP/과학자/디클래스는 참여할 수 없습니다.");
+                }
+            }
+
+            if (waitingPlayers.Count >= 2) // 또는 무조건 실행도 가능
+            {
+                StartTdm(); // ✅ TDM 즉시 시작
+            }
+            else
+            {
+                Log.Warn("[TDM] 대기 인원이 부족하여 시작하지 못했습니다.");
+            }
         }
 
         private void GiveLoadout(Player player)
