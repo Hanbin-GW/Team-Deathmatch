@@ -209,9 +209,9 @@ namespace TeamDeathmatch
         private Vector3 GetSpawnPointForTeam(string team)
         {
             if (team == "Team1")
-                return new Vector3(0, 300, 0);
+                return new Vector3(125, 296, -41);
             else
-                return new Vector3(50, 300, 0);
+                return new Vector3(6, 292, -42);
         }
         
         private void LoadTeamRoles()
