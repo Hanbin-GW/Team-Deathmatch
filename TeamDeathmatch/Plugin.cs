@@ -24,14 +24,19 @@ namespace TeamDeathmatch
         private List<Player> waitingPlayers = new();
         public bool TdmStarted = false;
         public static Plugin Instance { get; private set; }
+        public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         public void OnVerified(VerifiedEventArgs ev)
         {
             if (!TdmStarted)
             {
-                waitingPlayers.Add(ev.Player);
-                ev.Player.Broadcast(5, $"대기 중... ({waitingPlayers.Count}/10)");
-                if (waitingPlayers.Count == 10)
+                if (!waitingPlayers.Contains(ev.Player))
+                    waitingPlayers.Add(ev.Player);
+
+                ev.Player.Broadcast(5, $"TDM 대기 중... ({waitingPlayers.Count}/10)");
+
+                if (waitingPlayers.Count >= 10)
                     StartTdm();
+
                 return;
             }
 
@@ -144,6 +149,17 @@ namespace TeamDeathmatch
                 EndTdm(team);
             }
         }
+        
+        public void OnRoundStarted()
+        {
+            waitingPlayers.Clear();
+            team1.Clear();
+            team2.Clear();
+            playerTeams.Clear();
+            TdmStarted = false;
+
+            Log.Info("[TDM] 라운드가 시작되었습니다. TDM 준비 대기중...");
+        }
 
         private void GiveLoadout(Player player)
         {
@@ -184,9 +200,10 @@ namespace TeamDeathmatch
 
         private void EndTdm(string winningTeam)
         {
-            Map.Broadcast(10, $"{winningTeam} 승리! 게임을 재시작합니다.");
-            Round.IsLocked = false;
-            Timing.CallDelayed(10,()=>Round.Restart());
+            Map.Broadcast(10, $"{winningTeam} 승리! 라운드를 재시작합니다.");
+            TdmStarted = false;
+            // 이건 그대로 유지
+            Timing.CallDelayed(5f, () => Round.Restart());
         }
         
         private Vector3 GetSpawnPointForTeam(string team)
@@ -220,8 +237,41 @@ namespace TeamDeathmatch
 
             Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
         }
+        public void OnSpawned(SpawnedEventArgs ev)
+        {
+            if (!Round.IsStarted || TdmStarted)
+                return;
 
-        
+            // SCP / Scientist / D-Class 등 허용되지 않은 진영 필터링
+            if (ev.Player.Role.Team is Team.SCPs or Team.ClassD or Team.Scientists)
+            {
+                Log.Info($"[TDM] {ev.Player.Nickname}은 허용되지 않은 팀이므로 인간 진영으로 강제 이동됩니다.");
+
+                string team;
+                if (team1.Count <= team2.Count)
+                {
+                    team = "Team1";
+                    team1.Add(ev.Player);
+                    ev.Player.Role.Set(RoleTypeId.NtfSergeant);
+                }
+                else
+                {
+                    team = "Team2";
+                    team2.Add(ev.Player);
+                    ev.Player.Role.Set(RoleTypeId.ChaosRifleman);
+                }
+
+                playerTeams[ev.Player] = team;
+                waitingPlayers.Add(ev.Player);
+                Timing.CallDelayed(1f, () =>
+                {
+                    ev.Player.ClearInventory();
+                    GiveLoadout(ev.Player);
+                    ev.Player.Position = GetSpawnPointForTeam(team);
+                    ev.Player.Broadcast(5, $"TDM: {team} 팀으로 자동 배정되었습니다.");
+                });
+            }
+        }
         public void OnLeft(LeftEventArgs ev)
         {
             if (!TdmStarted) return;
@@ -242,23 +292,33 @@ namespace TeamDeathmatch
                 Timing.CallDelayed(5f, () => Round.Restart());
             }
         }
-
+        
+        public void OnWaitingForPlayers()
+        {
+            Round.IsLocked = true;
+            Log.Info("[TDM] 라운드 잠금: 일반 라운드 비활성화");
+        }
         
         public override void OnEnabled()
         {
             Instance = this;
-            Round.IsLocked = true;
             LoadTeamRoles();
+            Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
+            Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
+            Exiled.Events.Handlers.Player.Spawned += OnSpawned;
             Exiled.Events.Handlers.Player.Left += OnLeft;
             base.OnEnabled();
         }
 
         public override void OnDisabled()
         {
+            Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
+            Exiled.Events.Handlers.Player.Spawned -= OnSpawned;
             Exiled.Events.Handlers.Player.Left -= OnLeft;
             base.OnDisabled();
             Instance = null;
