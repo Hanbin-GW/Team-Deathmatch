@@ -7,7 +7,7 @@ namespace TeamDeathmatch.Commands
     [CommandHandler(typeof(ClientCommandHandler))]
     public class StartTdmCommand : ICommand
     {
-        public string Command => "ㅡ";
+        public string Command => "startdm";
         public string[] Aliases => new[] { "sc" };
         public string Description => "강제로 TDM을 시작합니다.";
 

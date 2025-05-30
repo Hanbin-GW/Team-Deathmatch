@@ -18,7 +18,7 @@ namespace TeamDeathmatch
 
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(1, 0, 1);
+        public override Version Version { get; } = new Version(1, 0, 2);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> waitingPlayers = new();
@@ -135,6 +135,29 @@ namespace TeamDeathmatch
             if (!playerTeams.TryGetValue(ev.Player, out team))
                 return;
 
+            // 팀 정보 확인
+            if (!playerTeams.TryGetValue(ev.Player, out string victimTeam))
+                return;
+
+            if (ev.Attacker is not { } attacker || attacker == ev.Player)
+                return; 
+
+            if (!playerTeams.TryGetValue(attacker, out string attackerTeam))
+                return;
+
+            if (!TeamScores.ContainsKey(attackerTeam))
+                TeamScores[attackerTeam] = 0;
+
+            TeamScores[attackerTeam]++;      
+            
+            foreach (var p in Player.List)
+            {
+                p.ShowHint(
+                    $"<b><color=blue>Team1: {TeamScores["Team1"]}</color> | <color=green>Team2: {TeamScores["Team2"]}</color></b>",
+                    3f
+                );
+            }
+            
             Timing.CallDelayed(5f, () =>
             {
                 if (ev.Player == null || !ev.Player.IsConnected) return;
