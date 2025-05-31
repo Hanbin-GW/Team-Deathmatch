@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
@@ -126,8 +127,8 @@ namespace TeamDeathmatch
 
             Map.Broadcast(10, "Team Deathmatch 시작! 30킬 먼저 하는 팀이 승리합니다.");
         }
-        
-        public void OnPlayerDied(DiedEventArgs ev)
+
+        private void OnPlayerDied(DiedEventArgs ev)
         {
             if (!TdmStarted) return;
 
@@ -172,8 +173,8 @@ namespace TeamDeathmatch
                 EndTdm(team);
             }
         }
-        
-        public void OnRoundStarted()
+
+        private void OnRoundStarted()
         {
             if (TdmStarted)
                 return;
@@ -204,7 +205,7 @@ namespace TeamDeathmatch
             }
             else
             {
-                Log.Warn("[TDM] 대기 인원이 부족하여 시작하지 못했습니다.");
+                Log.Send("[TDM] 대기 인원이 부족하여 시작하지 못했습니다.", LogLevel.Warn, ConsoleColor.Green);
             }
         }
 
@@ -284,7 +285,8 @@ namespace TeamDeathmatch
 
             Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
         }
-        public void OnSpawned(SpawnedEventArgs ev)
+
+        private void OnSpawned(SpawnedEventArgs ev)
         {
             if (!Round.IsStarted || TdmStarted)
                 return;
@@ -319,7 +321,8 @@ namespace TeamDeathmatch
                 });
             }
         }
-        public void OnLeft(LeftEventArgs ev)
+
+        private void OnLeft(LeftEventArgs ev)
         {
             if (!TdmStarted) return;
 
@@ -339,11 +342,11 @@ namespace TeamDeathmatch
                 Timing.CallDelayed(5f, () => Round.Restart());
             }
         }
-        
-        public void OnWaitingForPlayers()
+
+        private void OnWaitingForPlayers()
         {
             Round.IsLocked = true;
-            Log.Info("[TDM] 라운드 잠금: 일반 라운드 비활성화");
+            Log.Send("[TDM] 라운드 잠금: 일반 라운드 비활성화", LogLevel.Info, ConsoleColor.Blue);
         }
         
         public override void OnEnabled()
