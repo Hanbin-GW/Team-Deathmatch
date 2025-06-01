@@ -11,6 +11,7 @@ using UnityEngine;
 using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
 using GhostPlugin.API;
+using Interactables.Interobjects.DoorUtils;
 
 namespace TeamDeathmatch
 {
@@ -190,7 +191,10 @@ namespace TeamDeathmatch
         {
             if (TdmStarted)
                 return;
-
+            foreach (var lift in Lift.List)
+            {
+                lift.ChangeLock(DoorLockReason.Warhead);
+            }            
             // 모든 플레이어를 대기열에 추가
             waitingPlayers.Clear();
             team1.Clear();
