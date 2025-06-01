@@ -73,92 +73,108 @@ namespace TeamDeathmatch
         
         private bool TryAssignRandomCustomRole(Player player)
         {
-            if (!playerTeams.TryGetValue(player, out var team))
+            try
+            {
+                if (!playerTeams.TryGetValue(player, out var team))
+                    return false;
+
+                List<CustomRole> source = team == "Team1" ? MtfRoles : ChaosRoles;
+
+                if (source.Count == 0)
+                    return false;
+
+                int index = UnityEngine.Random.Range(0, source.Count);
+                CustomRole selected = source[index];
+
+                if (selected is ICustomRole cr && UnityEngine.Random.Range(0, 100) >= cr.Chance)
+                    return false;
+
+                selected.AddRole(player);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[TDM] 커스텀 롤 '{player}' 지급 중 오류: {ex.Message}");
                 return false;
+            }
 
-            List<CustomRole> source = team == "Team1" ? MtfRoles : ChaosRoles;
-
-            if (source.Count == 0)
-                return false;
-
-            int index = UnityEngine.Random.Range(0, source.Count);
-            CustomRole selected = source[index];
-
-            if (selected is ICustomRole cr && UnityEngine.Random.Range(0, 100) >= cr.Chance)
-                return false;
-
-            selected.AddRole(player);
-            return true;
         }
 
 
 
         public void StartTdm()
         {
+            if (waitingPlayers.Count < 2)
+            {
+                Log.Warn("[TDM] 시작할 인원이 부족합니다.");
+                return;
+            }
+
             TdmStarted = true;
             Round.IsLocked = true;
             Round.Start();
+
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
 
             var shuffled = waitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
+            int half = shuffled.Count / 2;
 
-            for (int i = 0; i < Config.TeamSize; i++)
+            for (int i = 0; i < half; i++)
             {
                 var p = shuffled[i];
                 p.Role.Set(RoleTypeId.NtfSergeant);
-                Timing.CallDelayed(0.1f, () =>
-                {
-                    Log.Info($"[{p.Nickname}] 팀 확인: {p.Role.Team}");
-                });
                 team1.Add(p);
-                playerTeams[p] = "Team1"; 
+                playerTeams[p] = "Team1";
                 p.Broadcast(5, "당신은 NTF 팀입니다!");
             }
 
-            for (int i = 5; i < Config.TeamSize; i++)
+            for (int i = half; i < shuffled.Count; i++)
             {
                 var p = shuffled[i];
                 p.Role.Set(RoleTypeId.ChaosRifleman);
                 team2.Add(p);
-                playerTeams[p] = "Team2"; 
+                playerTeams[p] = "Team2";
                 p.Broadcast(5, "당신은 카오스 팀입니다!");
             }
 
             Map.Broadcast(10, "Team Deathmatch 시작! 30킬 먼저 하는 팀이 승리합니다.");
         }
 
-        private void OnPlayerDied(DiedEventArgs ev)
+        public void OnPlayerDied(DiedEventArgs ev)
         {
             if (!TdmStarted) return;
 
-            string team;
-            if (!playerTeams.TryGetValue(ev.Player, out team))
+            if (!playerTeams.TryGetValue(ev.Player, out var team))
                 return;
 
-            // 팀 정보 확인
-            if (!playerTeams.TryGetValue(ev.Player, out string victimTeam))
-                return;
-
-            if (ev.Attacker is not { } attacker || attacker == ev.Player)
-                return; 
-
-            if (!playerTeams.TryGetValue(attacker, out string attackerTeam))
-                return;
-
-            if (!TeamScores.ContainsKey(attackerTeam))
-                TeamScores[attackerTeam] = 0;
-
-            TeamScores[attackerTeam]++;      
-            
-            foreach (var p in Player.List)
+            // ✅ Score logic only when 'attackers exist'
+            if (ev.Attacker is Player attacker && attacker != ev.Player)
             {
-                p.ShowHint(
-                    $"<b><color=blue>Team1: {TeamScores["Team1"]}</color> | <color=green>Team2: {TeamScores["Team2"]}</color></b>",
-                    3f
-                );
+                if (playerTeams.TryGetValue(attacker, out string attackerTeam))
+                {
+                    if (!TeamScores.ContainsKey(attackerTeam))
+                        TeamScores[attackerTeam] = 0;
+
+                    TeamScores[attackerTeam]++;
+
+                    foreach (var p in Player.List)
+                    {
+                        p.ShowHint(
+                            $"<b><color=blue>Team1: {TeamScores["Team1"]}</color> | <color=green>Team2: {TeamScores["Team2"]}</color></b>",
+                            3f
+                        );
+                    }
+
+                    if (TeamScores[attackerTeam] >= 30)
+                    {
+                        EndTdm(attackerTeam);
+                        return;
+                    }
+                }
             }
-            
+
+            // ✅ 리스폰은 항상 실행
             Timing.CallDelayed(5f, () =>
             {
                 if (ev.Player == null || !ev.Player.IsConnected) return;
@@ -166,12 +182,8 @@ namespace TeamDeathmatch
                 ev.Player.Role.Set(team == "Team1" ? RoleTypeId.NtfSergeant : RoleTypeId.ChaosRifleman);
                 ev.Player.ClearInventory();
                 GiveLoadout(ev.Player);
-                ev.Player.Position = GetSpawnPointForTeam(team); // 팀별 스폰 지점 지정
+                ev.Player.Position = GetSpawnPointForTeam(team); // ⬅ 여기도 수정 필요!
             });
-            if (TeamScores[team] >= 30)
-            {
-                EndTdm(team);
-            }
         }
 
         private void OnRoundStarted()
@@ -256,10 +268,12 @@ namespace TeamDeathmatch
         
         private Vector3 GetSpawnPointForTeam(string team)
         {
-            if (team == "Team1")
-                return new Vector3(125, 296, -41);
-            else
-                return new Vector3(6, 292, -42);
+            return team switch
+            {
+                "Team1" => new Vector3(125, 296, -41),
+                "Team2" => new Vector3(6, 292, -42),
+                _ => new Vector3(0, 300, 0) // fallback 위치
+            };
         }
         
         private void LoadTeamRoles()
