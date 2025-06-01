@@ -162,7 +162,7 @@ namespace TeamDeathmatch
                     foreach (var p in Player.List)
                     {
                         p.ShowHint(
-                            $"<b><color=blue>Team1: {TeamScores["Team1"]}</color> | <color=green>Team2: {TeamScores["Team2"]}</color></b>",
+                            $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>",
                             3f
                         );
                     }

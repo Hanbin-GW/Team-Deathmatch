@@ -8,7 +8,7 @@ namespace TeamDeathmatch.Commands
     public class StartTdmCommand : ICommand
     {
         public string Command => "startdm";
-        public string[] Aliases => new[] { "sc" };
+        public string[] Aliases => new[] { "fst" };
         public string Description => "강제로 TDM을 시작합니다.";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
