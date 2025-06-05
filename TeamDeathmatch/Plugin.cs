@@ -100,9 +100,16 @@ namespace TeamDeathmatch
             }
 
         }
-
-
-
+        
+        private void ResetTdmState()
+        {
+            TdmStarted = false;
+            waitingPlayers.Clear();
+            team1.Clear();
+            team2.Clear();
+            playerTeams.Clear();
+            TeamScores.Clear();
+        }
         public void StartTdm()
         {
             if (waitingPlayers.Count < 2)
@@ -371,6 +378,7 @@ namespace TeamDeathmatch
         {
             Instance = this;
             LoadTeamRoles();
+            ResetTdmState();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
