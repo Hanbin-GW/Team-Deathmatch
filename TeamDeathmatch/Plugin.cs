@@ -20,7 +20,7 @@ namespace TeamDeathmatch
 
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(1, 0, 3);
+        public override Version Version { get; } = new Version(1, 0, 4);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> waitingPlayers = new();
