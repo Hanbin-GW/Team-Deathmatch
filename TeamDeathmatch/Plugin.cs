@@ -275,6 +275,7 @@ namespace TeamDeathmatch
             TdmStarted = false;
             // 이건 그대로 유지
             Timing.CallDelayed(5f, () => Round.Restart());
+            ResetTdmState();
         }
         
         private Vector3 GetSpawnPointForTeam(string team)
@@ -378,7 +379,6 @@ namespace TeamDeathmatch
         {
             Instance = this;
             LoadTeamRoles();
-            ResetTdmState();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
