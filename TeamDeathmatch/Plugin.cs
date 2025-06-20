@@ -13,6 +13,9 @@ using Exiled.CustomRoles.API.Features;
 using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
 using Interactables.Interobjects.DoorUtils;
+using HintServiceMeow.Core.Enum;
+using HintServiceMeow.Core.Utilities;
+using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
 {
@@ -20,7 +23,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(1, 0, 7);
+        public override Version Version { get; } = new Version(2, 0, 0, 800);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> waitingPlayers = new();
@@ -29,6 +32,15 @@ namespace TeamDeathmatch
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         public void OnVerified(VerifiedEventArgs ev)
         {
+            Hint hint = new Hint()
+            {
+                Text = "Ghost Server [Team Death Match]",
+                FontSize = 18,
+                YCoordinate = 1000,
+                Alignment = HintAlignment.Center,
+            };
+            PlayerDisplay playerDisplay = PlayerDisplay.Get(ev.Player);
+            playerDisplay.AddHint(hint);
             if (!TdmStarted)
             {
                 if (!waitingPlayers.Contains(ev.Player))
@@ -71,7 +83,7 @@ namespace TeamDeathmatch
         List<CustomRole> MtfRoles = new();
         List<CustomRole> ChaosRoles = new();
         public Dictionary<string, int> TeamScores = new();
-        
+        private CoroutineHandle scoreHintCoroutine;
         private bool TryAssignRandomCustomRole(Player player)
         {
             try
@@ -124,6 +136,7 @@ namespace TeamDeathmatch
 
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
+            scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
 
             var shuffled = waitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
             int half = shuffled.Count / 2;
@@ -276,6 +289,8 @@ namespace TeamDeathmatch
 
         private void EndTdm(string winningTeam)
         {
+            Timing.KillCoroutines(scoreHintCoroutine);
+
             Map.Broadcast(10, $"{winningTeam} 승리! 라운드를 재시작합니다.");
             TdmStarted = false;
             // 이건 그대로 유지
@@ -370,6 +385,22 @@ namespace TeamDeathmatch
                 Round.IsLocked = false;
                 Map.Broadcast(10, "⚠️ 플레이어 수 부족으로 라운드를 종료합니다!");
                 Timing.CallDelayed(5f, () => Round.Restart());
+            }
+        }
+        private IEnumerator<float> ShowScoreHints()
+        {
+            while (TdmStarted)
+            {
+                string hint = "<align=right><size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
+                              $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
+                              $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color></align>";
+
+                foreach (var player in Player.List.Where(p => p.IsAlive))
+                {
+                    player.ShowHint(hint, 1f);
+                }
+
+                yield return Timing.WaitForSeconds(1f); // 1초마다 갱신
             }
         }
 
