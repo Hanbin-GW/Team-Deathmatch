@@ -391,20 +391,23 @@ namespace TeamDeathmatch
         {
             while (TdmStarted)
             {
-                string scoreText = $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>";
-
+                //string scoreText = $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>";
+                string scoreText = "<size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
+                                   $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
+                                   $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color>";
                 foreach (var player in Player.List.Where(p => p.IsAlive))
                 {
-                    Hint hint = new Hint()
+                    var display = PlayerDisplay.Get(player);
+                    display.RemoveHint("tdm_score");
+
+                    display.AddHint(new Hint
                     {
                         Id = "tdm_score",
                         Text = scoreText,
                         FontSize = 18,
                         YCoordinate = 300,
                         Alignment = HintAlignment.Left
-                    };
-
-                    PlayerDisplay.Get(player).AddHint(hint);
+                    });
                 }
 
                 yield return Timing.WaitForSeconds(1f);
