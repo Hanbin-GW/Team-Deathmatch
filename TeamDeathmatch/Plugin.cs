@@ -391,18 +391,26 @@ namespace TeamDeathmatch
         {
             while (TdmStarted)
             {
-                string hint = "<align=left><size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
-                              $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
-                              $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color></align>";
+                string scoreText = $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>";
 
                 foreach (var player in Player.List.Where(p => p.IsAlive))
                 {
-                    player.ShowHint(hint, 1f);
+                    Hint hint = new Hint()
+                    {
+                        Id = "tdm_score",
+                        Text = scoreText,
+                        FontSize = 18,
+                        YCoordinate = 300,
+                        Alignment = HintAlignment.Left
+                    };
+
+                    PlayerDisplay.Get(player).AddHint(hint);
                 }
 
-                yield return Timing.WaitForSeconds(1f); // 1초마다 갱신
+                yield return Timing.WaitForSeconds(1f);
             }
         }
+
 
         private void OnWaitingForPlayers()
         {
