@@ -26,11 +26,11 @@ namespace TeamDeathmatch
         public override Version Version { get; } = new Version(2, 0, 0, 800);
         
         public Dictionary<Player, string> playerTeams = new();
-        public List<Player> waitingPlayers = new();
+        public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
-        public void OnVerified(VerifiedEventArgs ev)
+        private void OnVerified(VerifiedEventArgs ev)
         {
             Hint hint = new Hint()
             {
@@ -43,12 +43,12 @@ namespace TeamDeathmatch
             playerDisplay.AddHint(hint);
             if (!TdmStarted)
             {
-                if (!waitingPlayers.Contains(ev.Player))
-                    waitingPlayers.Add(ev.Player);
+                if (!WaitingPlayers.Contains(ev.Player))
+                    WaitingPlayers.Add(ev.Player);
 
-                ev.Player.Broadcast(5, $"TDM 대기 중... ({waitingPlayers.Count}/{Config.TeamSize * 2})");
+                ev.Player.Broadcast(5, $"TDM 대기 중... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
 
-                if (waitingPlayers.Count >= Config.TeamSize * 2)
+                if (WaitingPlayers.Count >= Config.TeamSize * 2)
                     StartTdm();
 
                 return;
@@ -116,7 +116,7 @@ namespace TeamDeathmatch
         private void ResetTdmState()
         {
             TdmStarted = false;
-            waitingPlayers.Clear();
+            WaitingPlayers.Clear();
             team1.Clear();
             team2.Clear();
             playerTeams.Clear();
@@ -124,7 +124,7 @@ namespace TeamDeathmatch
         }
         public void StartTdm()
         {
-            if (waitingPlayers.Count < 2)
+            if (WaitingPlayers.Count < 2)
             {
                 Log.Warn("[TDM] 시작할 인원이 부족합니다.");
                 return;
@@ -138,7 +138,7 @@ namespace TeamDeathmatch
             TeamScores["Team2"] = 0;
             scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
 
-            var shuffled = waitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
+            var shuffled = WaitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
             int half = shuffled.Count / 2;
 
             for (int i = 0; i < half; i++)
@@ -221,7 +221,7 @@ namespace TeamDeathmatch
                 lift.ChangeLock(DoorLockReason.Warhead);
             }            
             // 모든 플레이어를 대기열에 추가
-            waitingPlayers.Clear();
+            WaitingPlayers.Clear();
             team1.Clear();
             team2.Clear();
             playerTeams.Clear();
@@ -230,7 +230,7 @@ namespace TeamDeathmatch
             {
                 if (p.Role.Team is Team.FoundationForces or Team.ChaosInsurgency)
                 {
-                    waitingPlayers.Add(p);
+                    WaitingPlayers.Add(p);
                 }
                 else
                 {
@@ -240,7 +240,7 @@ namespace TeamDeathmatch
                 }
             }
 
-            if (waitingPlayers.Count >= 2) // 또는 무조건 실행도 가능
+            if (WaitingPlayers.Count >= 2) // 또는 무조건 실행도 가능
             {
                 StartTdm(); // ✅ TDM 즉시 시작
             }
@@ -357,7 +357,7 @@ namespace TeamDeathmatch
                 }
 
                 playerTeams[ev.Player] = team;
-                waitingPlayers.Add(ev.Player);
+                WaitingPlayers.Add(ev.Player);
                 Timing.CallDelayed(1f, () =>
                 {
                     ev.Player.ClearInventory();
@@ -371,7 +371,7 @@ namespace TeamDeathmatch
         private void OnLeft(LeftEventArgs ev)
         {
             // 플레이어 리스트에서 제거
-            waitingPlayers.Remove(ev.Player);
+            WaitingPlayers.Remove(ev.Player);
             team1.Remove(ev.Player);
             team2.Remove(ev.Player);
             playerTeams.Remove(ev.Player);
@@ -391,7 +391,7 @@ namespace TeamDeathmatch
         {
             while (TdmStarted)
             {
-                string hint = "<align=right><size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
+                string hint = "<align=left><size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
                               $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
                               $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color></align>";
 

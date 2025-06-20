@@ -25,9 +25,9 @@ namespace TeamDeathmatch.Commands
                 return false;
             }
 
-            if (TeamDeathmatch.Plugin.Instance.waitingPlayers.Count < 10)
+            if (TeamDeathmatch.Plugin.Instance.WaitingPlayers.Count < 10)
             {
-                response = $"❌ TDM을 시작하려면 최소 10명이 필요합니다. 현재: {TeamDeathmatch.Plugin.Instance.waitingPlayers.Count}/10";
+                response = $"❌ TDM을 시작하려면 최소 10명이 필요합니다. 현재: {TeamDeathmatch.Plugin.Instance.WaitingPlayers.Count}/10";
                 return false;
             }
 
