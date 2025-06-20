@@ -10,6 +10,7 @@ using PlayerRoles;
 using UnityEngine;
 using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
+using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
 using Interactables.Interobjects.DoorUtils;
 
@@ -17,7 +18,6 @@ namespace TeamDeathmatch
 {
     public class Plugin : Plugin<Config>
     {
-
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
         public override Version Version { get; } = new Version(1, 0, 5);
@@ -194,6 +194,11 @@ namespace TeamDeathmatch
             });
         }
 
+        private void OnRespawningTeam(RespawningTeamEventArgs ev)
+        {
+            if (TdmStarted)
+                ev.IsAllowed = false;
+        }
         private void OnRoundStarted()
         {
             if (TdmStarted)
@@ -350,13 +355,12 @@ namespace TeamDeathmatch
 
         private void OnLeft(LeftEventArgs ev)
         {
-            if (!TdmStarted) return;
-
             // 플레이어 리스트에서 제거
             waitingPlayers.Remove(ev.Player);
             team1.Remove(ev.Player);
             team2.Remove(ev.Player);
             playerTeams.Remove(ev.Player);
+            if (!TdmStarted) return;
 
             int alive = team1.Count + team2.Count;
 
@@ -385,6 +389,7 @@ namespace TeamDeathmatch
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
             Exiled.Events.Handlers.Player.Spawned += OnSpawned;
             Exiled.Events.Handlers.Player.Left += OnLeft;
+            Exiled.Events.Handlers.Server.RespawningTeam += OnRespawningTeam;
             base.OnEnabled();
         }
 
@@ -396,6 +401,7 @@ namespace TeamDeathmatch
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
             Exiled.Events.Handlers.Player.Spawned -= OnSpawned;
             Exiled.Events.Handlers.Player.Left -= OnLeft;
+            Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
             base.OnDisabled();
             Instance = null;
         }
