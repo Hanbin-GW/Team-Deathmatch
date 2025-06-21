@@ -268,9 +268,13 @@ namespace TeamDeathmatch
                     }
                 }
                 player.AddItem(ItemType.GunE11SR);
+                player.AddItem(ItemType.GunCOM18);
                 player.AddItem(ItemType.ArmorHeavy);
                 player.AddItem(ItemType.Medkit);
-                player.AddAmmo(AmmoType.Nato556,120);
+                player.AddItem(ItemType.GrenadeHE);
+                player.AddItem(ItemType.GrenadeFlash);
+                player.AddAmmo(AmmoType.Nato556,200);
+                player.AddAmmo(AmmoType.Nato9, 70);
             }
             else if (team == "Team2")
             {
@@ -282,9 +286,13 @@ namespace TeamDeathmatch
                     }
                 }
                 player.AddItem(ItemType.GunAK);
+                player.AddItem(ItemType.GunRevolver);
                 player.AddItem(ItemType.ArmorHeavy);
-                player.AddItem(ItemType.Adrenaline);
-                player.Ammo[ItemType.Ammo762x39] = 90;
+                player.AddItem(ItemType.Medkit);
+                player.AddItem(ItemType.GrenadeHE);
+                player.AddItem(ItemType.GrenadeFlash);
+                player.AddAmmo(AmmoType.Nato762,200);
+                player.AddAmmo(AmmoType.Ammo44Cal, 42);
             }
         }
 
