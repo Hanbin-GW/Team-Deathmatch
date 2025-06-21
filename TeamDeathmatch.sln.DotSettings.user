@@ -6,4 +6,5 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002F14_002E0_0020dll_002FUnityEngine_002EPhysicsModule_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FAssembly_002DCSharp_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FHintServiceMeow_002DExiled_002Edll/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FGhostPlugin_002FGhostPlugin_002Fobj_002FRelease_002FGhostPlugin_002Edll/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FGhostPlugin_002FGhostPlugin_002Fobj_002FRelease_002FGhostPlugin_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">ERROR</s:String></wpf:ResourceDictionary>
