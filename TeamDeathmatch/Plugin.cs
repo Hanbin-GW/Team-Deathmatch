@@ -24,7 +24,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 0, 0, 1000);
+        public override Version Version { get; } = new Version(2, 0, 1);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -133,7 +133,7 @@ namespace TeamDeathmatch
 
             TdmStarted = true;
             Round.IsLocked = true;
-            Round.Start();
+            //Round.Start();
 
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
@@ -343,18 +343,15 @@ namespace TeamDeathmatch
 
         private void OnSpawned(SpawnedEventArgs ev)
         {
-            if (!Round.IsStarted)
+            if (!Round.IsStarted || TdmStarted)
                 return;
 
-            // 이미 진영이 배정된 플레이어는 무시
-            if (playerTeams.ContainsKey(ev.Player))
-                return;
-
-            string team;
-
-            // TDM이 시작된 경우 → 중도 참여 처리
-            if (TdmStarted)
+            // SCP / Scientist / D-Class 등 허용되지 않은 진영 필터링
+            if (ev.Player.Role.Team is Team.SCPs or Team.ClassD or Team.Scientists)
             {
+                Log.Info($"[TDM] {ev.Player.Nickname}은 허용되지 않은 팀이므로 인간 진영으로 강제 이동됩니다.");
+
+                string team;
                 if (team1.Count <= team2.Count)
                 {
                     team = "Team1";
@@ -369,31 +366,14 @@ namespace TeamDeathmatch
                 }
 
                 playerTeams[ev.Player] = team;
-
+                WaitingPlayers.Add(ev.Player);
                 Timing.CallDelayed(1f, () =>
                 {
                     ev.Player.ClearInventory();
                     GiveLoadout(ev.Player);
                     ev.Player.Position = GetSpawnPointForTeam(team);
-                    ev.Player.Broadcast(5, $"TDM 중도 참여: {team} 팀에 배정되었습니다.");
-                    ev.Player.EnableEffect<SpawnProtected>(duration: 2.5f);
+                    ev.Player.Broadcast(5, $"TDM: {team} 팀으로 자동 배정되었습니다.");
                 });
-            }
-            else
-            {
-                if (ev.Player.Role.Team is Team.SCPs or Team.ClassD or Team.Scientists)
-                {
-                    Log.Info($"[TDM] {ev.Player.Nickname}은 허용되지 않은 팀이므로 Spectator 처리됩니다.");
-                    ev.Player.Role.Set(RoleTypeId.Spectator);
-                    ev.Player.Broadcast(5, "TDM 모드에서는 SCP/과학자/디클래스는 참여할 수 없습니다.");
-                }
-                else
-                {
-                    if (!WaitingPlayers.Contains(ev.Player))
-                        WaitingPlayers.Add(ev.Player);
-
-                    ev.Player.Broadcast(5, $"TDM 대기 중... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
-                }
             }
         }
 
