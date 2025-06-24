@@ -13,9 +13,12 @@ using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
 using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
+using GhostPlugin.Custom.Roles.Chaos;
+using GhostPlugin.Custom.Roles.Foundation;
 using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
+using HintServiceMeow.UI.Utilities;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
@@ -29,6 +32,7 @@ namespace TeamDeathmatch
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
+        public ZoneType StartZone;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
@@ -104,6 +108,8 @@ namespace TeamDeathmatch
                     return false;
 
                 selected.AddRole(player);
+                var ui = PlayerUI.Get(player);
+                ui.CommonHint.ShowRoleHint(selected.Name, new[] { $"{selected.Description}", $"You have CustomAbilitis: {selected.CustomAbilities.ToString()}" });
                 return true;
             }
             catch (Exception ex)
@@ -134,11 +140,21 @@ namespace TeamDeathmatch
             TdmStarted = true;
             Round.IsLocked = true;
             //Round.Start();
+            ZoneType[] zones = new[]
+            {
+                ZoneType.LightContainment,
+                ZoneType.HeavyContainment,
+                ZoneType.Entrance,
+                ZoneType.Surface
+            };
+            StartZone = zones[UnityEngine.Random.Range(0, zones.Length)];
 
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
             scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
-
+            Log.Info($"[TDM] 이번 라운드는 {StartZone} 구역에서 진행됩니다.");
+            //Map.Broadcast(10, $"<b><color=yellow>{StartZone}</color></b> 구역에서 전투가 시작됩니다!");
+            
             var shuffled = WaitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
             int half = shuffled.Count / 2;
 
@@ -160,7 +176,7 @@ namespace TeamDeathmatch
                 p.Broadcast(5, "당신은 카오스 팀입니다!");
             }
 
-            Map.Broadcast(10, "Team Deathmatch 시작! 30킬 먼저 하는 팀이 승리합니다.");
+            Map.Broadcast(10, $"Team Deathmatch 시작! {Instance.Config.TeamScoreToWin}킬 먼저 하는 팀이 승리합니다.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
@@ -188,7 +204,7 @@ namespace TeamDeathmatch
                         );
                     }
 
-                    if (TeamScores[attackerTeam] >= 30)
+                    if (TeamScores[attackerTeam] >= Instance.Config.TeamScoreToWin)
                     {
                         EndTdm(attackerTeam);
                         return;
@@ -241,9 +257,9 @@ namespace TeamDeathmatch
                 }
             }
 
-            if (WaitingPlayers.Count >= 2) // 또는 무조건 실행도 가능
+            if (WaitingPlayers.Count >= 2)
             {
-                StartTdm(); // ✅ TDM 즉시 시작
+                StartTdm();
             }
             else
             {
@@ -313,7 +329,7 @@ namespace TeamDeathmatch
             {
                 "Team1" => new Vector3(125, 296, -41),
                 "Team2" => new Vector3(6, 292, -42),
-                _ => new Vector3(0, 300, 0) // fallback 위치
+                _ => new Vector3(0, 301, 0) // fallback 위치
             };
         }
         
@@ -337,7 +353,8 @@ namespace TeamDeathmatch
                     }
                 }
             }
-
+            MtfRoles.Remove(new Enforcer());
+            ChaosRoles.Remove(new FedoraAgent());
             Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
         }
 
@@ -349,7 +366,7 @@ namespace TeamDeathmatch
             // SCP / Scientist / D-Class 등 허용되지 않은 진영 필터링
             if (ev.Player.Role.Team is Team.SCPs or Team.ClassD or Team.Scientists)
             {
-                Log.Info($"[TDM] {ev.Player.Nickname}은 허용되지 않은 팀이므로 인간 진영으로 강제 이동됩니다.");
+                Log.Debug($"[TDM] {ev.Player.Nickname}은 허용되지 않은 팀이므로 인간 진영으로 강제 이동됩니다.");
 
                 string team;
                 if (team1.Count <= team2.Count)
