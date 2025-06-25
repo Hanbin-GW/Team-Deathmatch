@@ -27,7 +27,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 1, 0);
+        public override Version Version { get; } = new Version(2, 1, 1);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -352,14 +352,20 @@ namespace TeamDeathmatch
             switch (StartZone)
             {
                 case ZoneType.LightContainment:
-                    roomType = team == "Team1" ? RoomType.LczClassDSpawn : RoomType.LczToilets;
+                    if (team == "Team1") { roomType = RoomType.LczClassDSpawn; }
+                    else { roomType = RoomType.LczToilets; }
                     break;
                 case ZoneType.HeavyContainment:
-                    roomType = team == "Team1" ? RoomType.HczElevatorA : RoomType.HczElevatorB;
+                    /*roomType = team == "Team1" ? RoomType.HczElevatorA : RoomType.HczElevatorB;*/
+                    if(team == "Team1") { roomType = RoomType.HczElevatorA;}
+                    else{ roomType = RoomType.HczElevatorB;}
                     break;
                 case ZoneType.Entrance:
-                    roomType = team == "Team1" ? RoomType.EzShelter : RoomType.EzGateA;
+                    if(team == "Team1") {roomType = RoomType.EzCollapsedTunnel; }
+                    else { roomType = RoomType.EzGateA; }
                     break;
+                    /*roomType = team == "Team1" ? RoomType.EzCollapsedTunnel : RoomType.EzGateA;
+                    break;*/
                 default:
                     roomType = RoomType.Unknown;
                     break;
