@@ -148,7 +148,11 @@ namespace TeamDeathmatch
                 ZoneType.Surface
             };
             StartZone = zones[UnityEngine.Random.Range(0, zones.Length)];
-
+            /*foreach (var player in Player.List)
+            {
+                var display = PlayerDisplay.Get(player);
+                display.RemoveHint("tdm_score");
+            }*/
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
             scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
@@ -323,7 +327,7 @@ namespace TeamDeathmatch
             ResetTdmState();
         }
         
-        private Vector3 GetSpawnPointForTeam(string team)
+        /*private Vector3 GetSpawnPointForTeam(string team)
         {
             return team switch
             {
@@ -331,8 +335,45 @@ namespace TeamDeathmatch
                 "Team2" => new Vector3(6, 292, -42),
                 _ => new Vector3(0, 301, 0) // fallback 위치
             };
+        }*/
+        private Vector3 GetSpawnPointForTeam(string team)
+        {
+            // Surface는 벡터로 직접 지정
+            if (StartZone == ZoneType.Surface)
+            {
+                return team == "Team1"
+                    ?  new Vector3(125, 296, -41) // 예시 위치: 팀1 Surface
+                    : new Vector3(6, 292, -42);  // 예시 위치: 팀2 Surface
+            }
+
+            // RoomType은 ZoneType과 팀에 따라 결정
+            RoomType roomType;
+
+            switch (StartZone)
+            {
+                case ZoneType.LightContainment:
+                    roomType = team == "Team1" ? RoomType.LczClassDSpawn : RoomType.LczToilets;
+                    break;
+                case ZoneType.HeavyContainment:
+                    roomType = team == "Team1" ? RoomType.HczElevatorA : RoomType.HczElevatorB;
+                    break;
+                case ZoneType.Entrance:
+                    roomType = team == "Team1" ? RoomType.EzShelter : RoomType.EzGateA;
+                    break;
+                default:
+                    roomType = RoomType.Unknown;
+                    break;
+            }
+
+            Room room = Room.Get(roomType);
+            if (room != null)
+            {
+                return room.Position + Vector3.up;
+            }
+
+            return new Vector3(0f, 1000f, 0f);
         }
-        
+
         private void LoadTeamRoles()
         {
             MtfRoles.Clear();
@@ -389,7 +430,7 @@ namespace TeamDeathmatch
                     ev.Player.ClearInventory();
                     GiveLoadout(ev.Player);
                     ev.Player.Position = GetSpawnPointForTeam(team);
-                    ev.Player.Broadcast(5, $"TDM: {team} 팀으로 자동 배정되었습니다.");
+                    //ev.Player.Broadcast(5, $"TDM: {team} 팀으로 자동 배정되었습니다.");
                 });
             }
         }
