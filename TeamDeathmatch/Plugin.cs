@@ -27,7 +27,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 1, 1);
+        public override Version Version { get; } = new Version(2, 1, 0);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -287,6 +287,7 @@ namespace TeamDeathmatch
                         player.Broadcast(10,"당신한테 특수직업이 적용되었습니다!");
                     }
                 }
+                player.AddItem(ItemType.KeycardO5);
                 player.AddItem(ItemType.GunE11SR);
                 player.AddItem(ItemType.GunCOM18);
                 player.AddItem(ItemType.ArmorHeavy);
@@ -305,6 +306,7 @@ namespace TeamDeathmatch
                         player.Broadcast(10,"당신한테 특수직업이 적용되었습니다!");
                     }
                 }
+                player.AddItem(ItemType.KeycardO5);
                 player.AddItem(ItemType.GunAK);
                 player.AddItem(ItemType.GunRevolver);
                 player.AddItem(ItemType.ArmorHeavy);
@@ -338,15 +340,6 @@ namespace TeamDeathmatch
         }*/
         private Vector3 GetSpawnPointForTeam(string team)
         {
-            // Surface는 벡터로 직접 지정
-            if (StartZone == ZoneType.Surface)
-            {
-                return team == "Team1"
-                    ?  new Vector3(125, 296, -41) // 예시 위치: 팀1 Surface
-                    : new Vector3(6, 292, -42);  // 예시 위치: 팀2 Surface
-            }
-
-            // RoomType은 ZoneType과 팀에 따라 결정
             RoomType roomType;
 
             switch (StartZone)
@@ -366,18 +359,24 @@ namespace TeamDeathmatch
                     break;
                     /*roomType = team == "Team1" ? RoomType.EzCollapsedTunnel : RoomType.EzGateA;
                     break;*/
+                case ZoneType.Surface:
+                    // Surface는 RoomType이 없음 → 벡터 직접 리턴
+                    return team == "Team1"
+                        ? new Vector3(125, 296, -41)
+                        : new Vector3(6, 292, -42);
                 default:
                     roomType = RoomType.Unknown;
                     break;
             }
-
+            Log.Debug($"[TDM] 스폰 위치 결정: 팀={team}, 존={StartZone}");
+            
             Room room = Room.Get(roomType);
             if (room != null)
             {
                 return room.Position + Vector3.up;
             }
 
-            return new Vector3(0f, 1000f, 0f);
+            return new Vector3(0f, 300f, 0f);
         }
 
         private void LoadTeamRoles()
