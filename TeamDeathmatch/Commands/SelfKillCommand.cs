@@ -24,6 +24,11 @@ namespace TeamDeathmatch.Commands
             }
 
             response = "20초뒤 리스폰 됩니다!";
+            if (player.CurrentRoom.Zone == Plugin.Instance.StartZone)
+            {
+                response = "구역에 재대로 스폰되어 있습니다!";
+                return false;
+            }
             Timing.CallDelayed(20, () => player.Kill("스폰버그 처리"));
             return true;
         }
