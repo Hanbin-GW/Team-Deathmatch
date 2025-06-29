@@ -24,7 +24,7 @@ namespace TeamDeathmatch.Commands
             }
 
             response = "20초뒤 리스폰 됩니다!";
-            Timing.CallDelayed(20, () => player.Kill("bug kill"));
+            Timing.CallDelayed(20, () => player.Kill("스폰버그 처리"));
             return true;
         }
 

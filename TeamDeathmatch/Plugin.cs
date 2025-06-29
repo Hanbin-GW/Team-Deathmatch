@@ -354,7 +354,7 @@ namespace TeamDeathmatch
                     else{ roomType = RoomType.HczElevatorB;}
                     break;
                 case ZoneType.Entrance:
-                    if(team == "Team1") {roomType = RoomType.EzCollapsedTunnel; }
+                    if(team == "Team1") {roomType = RoomType.EzCheckpointHallwayA; }
                     else { roomType = RoomType.EzGateA; }
                     break;
                     /*roomType = team == "Team1" ? RoomType.EzCollapsedTunnel : RoomType.EzGateA;
