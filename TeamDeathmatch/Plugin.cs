@@ -51,7 +51,7 @@ namespace TeamDeathmatch
                 if (!WaitingPlayers.Contains(ev.Player))
                     WaitingPlayers.Add(ev.Player);
 
-                ev.Player.Broadcast(5, $"TDM 대기 중... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
+                ev.Player.Broadcast(5, $"TDM waiting... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
 
                 if (WaitingPlayers.Count >= Config.TeamSize * 2)
                     StartTdm();
@@ -74,7 +74,7 @@ namespace TeamDeathmatch
             }
 
             playerTeams[ev.Player] = team;
-            ev.Player.Broadcast(5, $"게임 도중 참가: {team} 팀에 배정되었습니다.");
+            ev.Player.Broadcast(5, $"Participation in the middle of the game: Selected in Team: {team}.");
             Timing.CallDelayed(1f, () =>
             {
                 ev.Player.ClearInventory();
@@ -114,7 +114,7 @@ namespace TeamDeathmatch
             }
             catch (Exception ex)
             {
-                Log.Error($"[TDM] 커스텀 롤 '{player}' 지급 중 오류: {ex.Message}");
+                Log.Error($"[TDM] CustomRole '{player}' Error occured: {ex.Message}");
                 return false;
             }
 
@@ -133,7 +133,7 @@ namespace TeamDeathmatch
         {
             if (WaitingPlayers.Count < 2)
             {
-                Log.Warn("[TDM] 시작할 인원이 부족합니다.");
+                Log.Warn("[TDM] Don't have enough people to start.");
                 return;
             }
 
@@ -156,7 +156,7 @@ namespace TeamDeathmatch
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
             scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
-            Log.Info($"[TDM] 이번 라운드는 {StartZone} 구역에서 진행됩니다.");
+            Log.Info($"[TDM] This round's battle zone is :{StartZone}.");
             //Map.Broadcast(10, $"<b><color=yellow>{StartZone}</color></b> 구역에서 전투가 시작됩니다!");
             
             var shuffled = WaitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
@@ -168,7 +168,7 @@ namespace TeamDeathmatch
                 p.Role.Set(RoleTypeId.NtfSergeant);
                 team1.Add(p);
                 playerTeams[p] = "Team1";
-                p.Broadcast(5, "당신은 NTF 팀입니다!");
+                p.Broadcast(5, "You are in NTF Team!");
             }
 
             for (int i = half; i < shuffled.Count; i++)
@@ -177,10 +177,10 @@ namespace TeamDeathmatch
                 p.Role.Set(RoleTypeId.ChaosRifleman);
                 team2.Add(p);
                 playerTeams[p] = "Team2";
-                p.Broadcast(5, "당신은 카오스 팀입니다!");
+                p.Broadcast(5, "You are in C.I Team");
             }
 
-            Map.Broadcast(10, $"Team Deathmatch 시작! {Instance.Config.TeamScoreToWin}킬 먼저 하는 팀이 승리합니다.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
+            Map.Broadcast(10, $"Team Deathmatch! The team that kills {Instance.Config.TeamScoreToWin} kills first wins.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
         public void OnPlayerDied(DiedEventArgs ev)
@@ -257,7 +257,7 @@ namespace TeamDeathmatch
                 {
                     // SCP / D-Class / Scientist → Spectator로 전환 또는 제거
                     p.Role.Set(RoleTypeId.Spectator);
-                    p.Broadcast(5, "TDM 모드에서는 SCP/과학자/디클래스는 참여할 수 없습니다.");
+                    p.Broadcast(5, "SCP/Scientist/D-Class cannot participate in TDM mode.");
                 }
             }
 
@@ -267,7 +267,7 @@ namespace TeamDeathmatch
             }
             else
             {
-                Log.Send("[TDM] 대기 인원이 부족하여 시작하지 못했습니다.", LogLevel.Warn, ConsoleColor.Green);
+                Log.Send("[TDM] can't start due to insufficient waiting.", LogLevel.Warn, ConsoleColor.Green);
             }
         }
 
@@ -284,7 +284,7 @@ namespace TeamDeathmatch
                 {
                     if (TryAssignRandomCustomRole(player))
                     {
-                        player.Broadcast(10,"당신한테 특수직업이 적용되었습니다!");
+                        player.Broadcast(10,"You got a CustomRole!");
                     }
                 }
                 player.AddItem(ItemType.KeycardO5);
@@ -303,7 +303,7 @@ namespace TeamDeathmatch
                 {
                     if (TryAssignRandomCustomRole(player))
                     {
-                        player.Broadcast(10,"당신한테 특수직업이 적용되었습니다!");
+                        player.Broadcast(10,"You got a CustomRole!");
                     }
                 }
                 player.AddItem(ItemType.KeycardO5);
@@ -401,7 +401,7 @@ namespace TeamDeathmatch
             }
             MtfRoles.Remove(new Enforcer());
             ChaosRoles.Remove(new FedoraAgent());
-            Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
+            Log.Debug($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
         }
 
         private void OnSpawned(SpawnedEventArgs ev)
@@ -457,7 +457,7 @@ namespace TeamDeathmatch
             {
                 TdmStarted = false;
                 Round.IsLocked = false;
-                Map.Broadcast(10, "⚠️ 플레이어 수 부족으로 라운드를 종료합니다!");
+                Map.Broadcast(10, "<color=red>⚠️ Ends the round due to insufficient number of players!</color>");
                 Timing.CallDelayed(5f, () => Round.Restart());
             }
         }
@@ -492,7 +492,7 @@ namespace TeamDeathmatch
         private void OnWaitingForPlayers()
         {
             Round.IsLocked = true;
-            Log.Send("[TDM] 라운드 잠금: 일반 라운드 비활성화", LogLevel.Info, ConsoleColor.Blue);
+            Log.Send("[TDM] Round Lock: Disable general round", LogLevel.Info, ConsoleColor.Blue);
         }
         
         public override void OnEnabled()
