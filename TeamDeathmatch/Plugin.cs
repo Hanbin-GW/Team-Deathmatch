@@ -11,6 +11,7 @@ using PlayerRoles;
 using UnityEngine;
 using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
+using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
 using GhostPlugin.Custom.Roles.Chaos;
@@ -19,7 +20,6 @@ using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.UI.Utilities;
-using LabApi.Events.Arguments.ServerEvents;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
@@ -36,8 +36,7 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
-
-        private void OnDeconStarted(LczDecontaminationStartingEventArgs ev)
+        private void OnDeconStarted(DecontaminatingEventArgs ev)
         {
             if(TdmStarted == true)
                 if (StartZone == ZoneType.LightContainment)
