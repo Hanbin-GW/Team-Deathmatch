@@ -19,6 +19,7 @@ using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.UI.Utilities;
+using LabApi.Events.Arguments.ServerEvents;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
@@ -35,6 +36,23 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
+
+        private void OnDeconStarted(LczDecontaminationStartingEventArgs ev)
+        {
+            if(TdmStarted == true)
+                if (StartZone == ZoneType.LightContainment)
+                {
+                    if (TeamScores["team1"] >= Instance.Config.TeamScoreToWin)
+                    {
+                        EndTdm("team1");
+                        return;
+                    }
+                    else
+                    {
+                        EndTdm("team2");
+                    }
+                }
+        }
         private void OnVerified(VerifiedEventArgs ev)
         {
             Hint hint = new Hint()
