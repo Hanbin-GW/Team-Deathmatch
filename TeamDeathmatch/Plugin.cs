@@ -516,6 +516,7 @@ namespace TeamDeathmatch
         {
             Instance = this;
             LoadTeamRoles();
+            Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
@@ -528,6 +529,7 @@ namespace TeamDeathmatch
 
         public override void OnDisabled()
         {
+            Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
