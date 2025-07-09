@@ -11,6 +11,7 @@ using PlayerRoles;
 using UnityEngine;
 using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
+using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
 using GhostPlugin.Custom.Roles.Chaos;
@@ -27,7 +28,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 1, 1);
+        public override Version Version { get; } = new Version(2, 2, 0);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -35,6 +36,23 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
+        
+        private void OnDeconStarted(DecontaminatingEventArgs ev)
+        {
+            if(TdmStarted == true)
+                if (StartZone == ZoneType.LightContainment)
+                {
+                    if (TeamScores["team1"] >= Instance.Config.TeamScoreToWin)
+                    {
+                        EndTdm("team1");
+                        return;
+                    }
+                    else
+                    {
+                        EndTdm("team2");
+                    }
+                }
+        }
         private void OnVerified(VerifiedEventArgs ev)
         {
             Hint hint = new Hint()
@@ -499,6 +517,7 @@ namespace TeamDeathmatch
         {
             Instance = this;
             LoadTeamRoles();
+            Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
@@ -511,6 +530,7 @@ namespace TeamDeathmatch
 
         public override void OnDisabled()
         {
+            Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
