@@ -23,7 +23,7 @@ A fully-customizable Team Deathmatch mode for SCP: Secret Laboratory multiplayer
 
 ---
 
-## 🛠 Installation
+## Installation
 
 1. Clone or download the repository:
    ```bash
