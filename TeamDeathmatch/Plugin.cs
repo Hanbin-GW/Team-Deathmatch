@@ -28,7 +28,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 2, 0);
+        public override Version Version { get; } = new Version(2, 3, 0);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -339,61 +339,56 @@ namespace TeamDeathmatch
         {
             Timing.KillCoroutines(scoreHintCoroutine);
 
-            Map.Broadcast(10, $"{winningTeam} 승리! 라운드를 재시작합니다.");
+            Map.Broadcast(10, $"{winningTeam} Win Restarting the round");
             TdmStarted = false;
             // 이건 그대로 유지
             Timing.CallDelayed(5f, () => Round.Restart());
             ResetTdmState();
         }
-        
-        /*private Vector3 GetSpawnPointForTeam(string team)
-        {
-            return team switch
-            {
-                "Team1" => new Vector3(125, 296, -41),
-                "Team2" => new Vector3(6, 292, -42),
-                _ => new Vector3(0, 301, 0) // fallback 위치
-            };
-        }*/
         private Vector3 GetSpawnPointForTeam(string team)
         {
-            RoomType roomType;
-
+            Room room = null;
             switch (StartZone)
             {
                 case ZoneType.LightContainment:
-                    if (team == "Team1") { roomType = RoomType.LczClassDSpawn; }
-                    else { roomType = RoomType.LczToilets; }
+                    if (Instance.Config.LczRespawns.TryGetValue(team, out var lczList))
+                    {
+                        var randomRoom = lczList[UnityEngine.Random.Range(0, lczList.Count)];
+                        room = Room.Get(randomRoom);
+                    }
+
                     break;
                 case ZoneType.HeavyContainment:
-                    /*roomType = team == "Team1" ? RoomType.HczElevatorA : RoomType.HczElevatorB;*/
-                    if(team == "Team1") { roomType = RoomType.HczElevatorA;}
-                    else{ roomType = RoomType.HczElevatorB;}
+                    if (Instance.Config.HczRespawns.TryGetValue(team, out var hczList))
+                    {
+                        var randomRoom = hczList[UnityEngine.Random.Range(0, hczList.Count)];
+                        room = Room.Get(randomRoom);
+                    }
+
                     break;
                 case ZoneType.Entrance:
-                    if(team == "Team1") {roomType = RoomType.EzCheckpointHallwayA; }
-                    else { roomType = RoomType.EzGateA; }
+                    if (Instance.Config.EzRespawns.TryGetValue(team, out var ezList))
+                    {
+                        var randomRoom = ezList[UnityEngine.Random.Range(0, ezList.Count)];
+                        room = Room.Get(randomRoom);
+                    }
+
                     break;
-                    /*roomType = team == "Team1" ? RoomType.EzCollapsedTunnel : RoomType.EzGateA;
-                    break;*/
                 case ZoneType.Surface:
-                    // Surface는 RoomType이 없음 → 벡터 직접 리턴
-                    return team == "Team1"
-                        ? new Vector3(125, 296, -41)
-                        : new Vector3(6, 292, -42);
-                default:
-                    roomType = RoomType.Unknown;
+                    if (Instance.Config.SurfaceRespawns.TryGetValue(team, out var surfaceList))
+                    {
+                        return surfaceList[UnityEngine.Random.Range(0, surfaceList.Count)];
+                    }
+
                     break;
             }
-            Log.Debug($"[TDM] 스폰 위치 결정: 팀={team}, 존={StartZone}");
-            
-            Room room = Room.Get(roomType);
             if (room != null)
             {
                 return room.Position + Vector3.up;
             }
 
-            return new Vector3(0f, 300f, 0f);
+            Log.Warn($"[TDM] No valid room found for team={team}, zone={StartZone}");
+            return new Vector3(0f, 300f, 0f); // fallback
         }
 
         private void LoadTeamRoles()
