@@ -18,7 +18,7 @@ A fully-customizable Team Deathmatch mode for SCP: Secret Laboratory multiplayer
 -  Weapon loadouts and randomized items
 -  Game start and end based on player count and score
 -  Real-time Korean team announcements and hints
--  Score display using in-game UI messages
+-  Score display using HintServiceMeow API
 -  Automatic round restarts for continuous gameplay
 
 ---
