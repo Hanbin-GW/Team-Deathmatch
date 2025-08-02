@@ -28,7 +28,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 1);
+        public override Version Version { get; } = new Version(2, 3, 3);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -423,6 +423,7 @@ namespace TeamDeathmatch
                 }
             }
             MtfRoles.Remove(new Enforcer());
+            MtfRoles.Remove(new HugoBoss());
             ChaosRoles.Remove(new FedoraAgent());
             Log.Info($"[TDM] 커스텀 롤 로딩 완료: MTF {MtfRoles.Count}개, Chaos {ChaosRoles.Count}개.");
         }
