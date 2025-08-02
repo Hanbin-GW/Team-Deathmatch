@@ -5,6 +5,7 @@ using CustomPlayerEffects;
 using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Features;
+using Exiled.API.Features.Doors;
 using Exiled.Events.EventArgs.Player;
 using MEC;
 using PlayerRoles;
@@ -28,7 +29,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 3);
+        public override Version Version { get; } = new Version(2, 3, 4);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -36,23 +37,6 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
-        
-        private void OnDeconStarted(DecontaminatingEventArgs ev)
-        {
-            if(TdmStarted == true)
-                if (StartZone == ZoneType.LightContainment)
-                {
-                    if (TeamScores["team1"] >= Instance.Config.TeamScoreToWin)
-                    {
-                        EndTdm("team1");
-                        return;
-                    }
-                    else
-                    {
-                        EndTdm("team2");
-                    }
-                }
-        }
         private void OnVerified(VerifiedEventArgs ev)
         {
             Hint hint = new Hint()
@@ -258,7 +242,21 @@ namespace TeamDeathmatch
             foreach (var lift in Lift.List)
             {
                 lift.ChangeLock(DoorLockReason.Warhead);
-            }            
+            }
+
+            foreach (var door in Door.List)
+            {
+                if (door.Type == DoorType.CheckpointLczA || door.Type == DoorType.CheckpointLczB)
+                {
+                    door.IsOpen = false;
+                    door.ChangeLock(DoorLockType.Lockdown079);
+                }            
+            }
+
+            if (StartZone == ZoneType.LightContainment)
+            {
+                Map.IsDecontaminationEnabled = false;
+            }
             // 모든 플레이어를 대기열에 추가
             WaitingPlayers.Clear();
             team1.Clear();
@@ -523,7 +521,6 @@ namespace TeamDeathmatch
         {
             Instance = this;
             LoadTeamRoles();
-            Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
@@ -536,7 +533,6 @@ namespace TeamDeathmatch
 
         public override void OnDisabled()
         {
-            Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
