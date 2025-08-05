@@ -90,6 +90,7 @@ namespace TeamDeathmatch
         List<CustomRole> MtfRoles = new();
         List<CustomRole> ChaosRoles = new();
         public Dictionary<string, int> TeamScores = new();
+        private string lastLeadingTeam = null;
         private CoroutineHandle scoreHintCoroutine;
         private bool TryAssignRandomCustomRole(Player player)
         {
