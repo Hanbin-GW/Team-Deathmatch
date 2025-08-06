@@ -21,6 +21,7 @@ using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.UI.Utilities;
+using TeamDeathmatch.EventHandlers;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
@@ -35,6 +36,7 @@ namespace TeamDeathmatch
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
         public ZoneType StartZone;
+        public AnnouncerEventHandlers AnnouncerEventHandlers;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
@@ -182,7 +184,37 @@ namespace TeamDeathmatch
                 playerTeams[p] = "Team2";
                 p.Broadcast(5, "당신은 카오스 팀입니다!");
             }
-
+            foreach (var player in Player.List)
+            {
+                AudioPlayer audioPlayerSpecial = AudioPlayer.CreateOrGet(
+                    $"Announcer AudioPlayer",
+                    condition: (hub) =>
+                    {
+                        Player player = new Player(hub);
+                        return player != null
+                               && Plugin.Instance.playerTeams.ContainsKey(player)
+                               && Plugin.Instance.playerTeams[player] == "Team1";
+                    },
+                    onIntialCreation: (p) =>
+                    {
+                        Speaker speaker = p.AddSpeaker("Main", isSpatial: true, maxDistance: 5000f);
+                    });
+                
+                AudioPlayer audioPlayerOpfor = AudioPlayer.CreateOrGet(
+                    $"Announcer AudioPlayer",
+                    condition: (hub) =>
+                    {
+                        Player player = new Player(hub);
+                        return player != null
+                               && Plugin.Instance.playerTeams.ContainsKey(player)
+                               && Plugin.Instance.playerTeams[player] != "Team2";
+                    },
+                    onIntialCreation: (p) =>
+                    {
+                        Speaker speaker = p.AddSpeaker("Main", isSpatial: true, maxDistance: 5000f);
+                    });
+                audioPlayerOpfor.AddClip("LoadUpLetsGo");
+            }
             Map.Broadcast(10, $"Team Deathmatch 시작! {Instance.Config.TeamScoreToWin}킬 먼저 하는 팀이 승리합니다.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
@@ -521,7 +553,9 @@ namespace TeamDeathmatch
         public override void OnEnabled()
         {
             Instance = this;
+            AnnouncerEventHandlers = new AnnouncerEventHandlers();
             LoadTeamRoles();
+            AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
@@ -541,8 +575,9 @@ namespace TeamDeathmatch
             Exiled.Events.Handlers.Player.Spawned -= OnSpawned;
             Exiled.Events.Handlers.Player.Left -= OnLeft;
             Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
-            base.OnDisabled();
             Instance = null;
+            AnnouncerEventHandlers = null;
+            base.OnDisabled();
         }
     }
 }

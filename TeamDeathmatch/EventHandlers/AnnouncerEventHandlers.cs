@@ -10,7 +10,11 @@ namespace TeamDeathmatch.EventHandlers
     {
         public Plugin Plugin;
         public readonly string AudioDirectory;
-
+        
+        public void OnPluginLoad()
+        {
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory,"\\Opfor","\\LoadUpLetsGo.ogg"), "LoadUpLetsGo");
+        }
         public AnnouncerEventHandlers()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -22,7 +26,7 @@ namespace TeamDeathmatch.EventHandlers
             foreach (var player in Player.List)
             {
                 AudioPlayer audioPlayerWinning = AudioPlayer.CreateOrGet(
-                    $"Spectator AudioPlayer",
+                    $"Announcer AudioPlayer",
                     condition: (hub) =>
                     {
                         Player player = new Player(hub);
@@ -36,7 +40,7 @@ namespace TeamDeathmatch.EventHandlers
                     });
                 
                 AudioPlayer audioPlayerLosing = AudioPlayer.CreateOrGet(
-                    $"Spectator AudioPlayer",
+                    $"Announcer AudioPlayer",
                     condition: (hub) =>
                     {
                         Player player = new Player(hub);
