@@ -30,7 +30,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 9, 800);
+        public override Version Version { get; } = new Version(2, 3, 5);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -184,37 +184,7 @@ namespace TeamDeathmatch
                 playerTeams[p] = "Team2";
                 p.Broadcast(5, "당신은 카오스 팀입니다!");
             }
-            foreach (var player in Player.List)
-            {
-                AudioPlayer audioPlayerSpecial = AudioPlayer.CreateOrGet(
-                    $"Announcer AudioPlayer",
-                    condition: (hub) =>
-                    {
-                        Player player = new Player(hub);
-                        return player != null
-                               && Plugin.Instance.playerTeams.ContainsKey(player)
-                               && Plugin.Instance.playerTeams[player] == "Team1";
-                    },
-                    onIntialCreation: (p) =>
-                    {
-                        Speaker speaker = p.AddSpeaker("Main", isSpatial: true, maxDistance: 5000f);
-                    });
-                
-                AudioPlayer audioPlayerOpfor = AudioPlayer.CreateOrGet(
-                    $"Announcer AudioPlayer",
-                    condition: (hub) =>
-                    {
-                        Player player = new Player(hub);
-                        return player != null
-                               && Plugin.Instance.playerTeams.ContainsKey(player)
-                               && Plugin.Instance.playerTeams[player] != "Team2";
-                    },
-                    onIntialCreation: (p) =>
-                    {
-                        Speaker speaker = p.AddSpeaker("Main", isSpatial: true, maxDistance: 5000f);
-                    });
-                audioPlayerOpfor.AddClip("LoadUpLetsGo");
-            }
+
             Map.Broadcast(10, $"Team Deathmatch 시작! {Instance.Config.TeamScoreToWin}킬 먼저 하는 팀이 승리합니다.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
@@ -554,6 +524,7 @@ namespace TeamDeathmatch
         {
             Instance = this;
             AnnouncerEventHandlers = new AnnouncerEventHandlers();
+            AnnouncerEventHandlers.Plugin = this;
             LoadTeamRoles();
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
@@ -577,6 +548,7 @@ namespace TeamDeathmatch
             Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
             Instance = null;
             AnnouncerEventHandlers = null;
+            AnnouncerEventHandlers.Plugin = null;
             base.OnDisabled();
         }
     }
