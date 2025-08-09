@@ -40,6 +40,9 @@
         <Reference Include="Assembly-CSharp-firstpass">
           <HintPath>..\..\..\Documents\14.0 dll\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
+        <Reference Include="AudioPlayerApi">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\AudioPlayerApi.dll</HintPath>
+        </Reference>
         <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\CommandSystem.Core.dll</HintPath>
         </Reference>
@@ -80,12 +83,30 @@
         <Reference Include="NorthwoodLib, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.6.1\lib\net48\NorthwoodLib.dll</HintPath>
         </Reference>
-        <Reference Include="System"/>
+        <Reference Include="NVorbis">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\NVorbis.dll</HintPath>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.Buffers">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\System.Buffers.dll</HintPath>
+        </Reference>
         <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
           <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
         </Reference>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Data"/>
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Memory">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\System.Memory.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Numerics.Vectors">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\System.Numerics.Vectors.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.CompilerServices.Unsafe">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
+        <Reference Include="System.ValueTuple">
+          <HintPath>..\..\..\Documents\AudioPlayerAPI\System.ValueTuple.dll</HintPath>
+        </Reference>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
           <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.dll</HintPath>
@@ -105,6 +126,7 @@
         <Compile Include="Commands\SelfKillCommand.cs" />
         <Compile Include="Commands\StartTdmCommand.cs" />
         <Compile Include="Config.cs" />
+        <Compile Include="EventHandlers\AnnouncerEventHandlers.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
