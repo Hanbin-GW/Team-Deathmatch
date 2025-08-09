@@ -11,20 +11,37 @@ namespace TeamDeathmatch.EventHandlers
         public Plugin Plugin;
         public readonly string AudioDirectory;
         
-        public void OnPluginLoad()
-        {
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"), "ChaosLoad");
-            // AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "ReadyToMove.ogg"), "MtfLoad");
-        }
+        
         public AnnouncerEventHandlers()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             AudioDirectory = Path.Combine(appDataPath, "EXILED", "Plugins", "DeathMatch");
         }
-        
+        public void OnPluginLoad()
+        {
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"), "ChaosLoad");
+            // AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "ReadyToMove.ogg"), "MtfLoad");
+        }
+        public void EnsureMusicDirectoryExists()
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED", "Plugins", "DeathMatch");
+
+            // 폴더가 없으면 생성
+            if (!Directory.Exists(path))
+            {
+                Log.Warn($"music folder is not existed create new one : {path}");
+                Directory.CreateDirectory(path);  // 폴더 생성
+            }
+            else
+            {
+                Log.Info("music folder already exists.");
+            }
+        }
         public void OnRoundStarted()
         {
-            PlayTeamStartAudio("Chaos", "ChaosLoad");
+            PlayTeamStartAudio("Team2", "ChaosLoad");
+            PlayTeamStartAudio("Team1", "ChaosLoad");
+            Log.Info("Playing LoadUp");
             //PlayTeamStartAudio("Foundation", "MtfLoad");
         }
 
@@ -92,8 +109,8 @@ namespace TeamDeathmatch.EventHandlers
         {
             return player.Role.Team switch
             {
-                Team.ChaosInsurgency => "Chaos",
-                Team.FoundationForces => "Foundation",
+                Team.ChaosInsurgency => "Team2",
+                Team.FoundationForces => "Team1",
                 _ => "Others"
             };
         }

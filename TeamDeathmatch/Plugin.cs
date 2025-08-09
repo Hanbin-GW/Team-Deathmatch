@@ -30,7 +30,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 5);
+        public override Version Version { get; } = new Version(2, 3, 6);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
@@ -525,9 +525,11 @@ namespace TeamDeathmatch
             Instance = this;
             AnnouncerEventHandlers = new AnnouncerEventHandlers();
             AnnouncerEventHandlers.Plugin = this;
+            AnnouncerEventHandlers.EnsureMusicDirectoryExists();
             LoadTeamRoles();
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
@@ -540,6 +542,7 @@ namespace TeamDeathmatch
         public override void OnDisabled()
         {
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
