@@ -515,6 +515,7 @@ namespace TeamDeathmatch
             AnnouncerEventHandlers = new AnnouncerEventHandlers();
             AnnouncerEventHandlers.Plugin = this;
             LoadTeamRoles();
+            AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
