@@ -20,6 +20,7 @@ using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.UI.Utilities;
+using TeamDeathmatch.EventHandlers;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace TeamDeathmatch
@@ -28,12 +29,13 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 0);
+        public override Version Version { get; } = new Version(2, 3, 10);
         
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
         public ZoneType StartZone;
+        public AnnouncerEventHandlers AnnouncerEventHandlers;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnDeconStarted(DecontaminatingEventArgs ev)
@@ -510,9 +512,12 @@ namespace TeamDeathmatch
         public override void OnEnabled()
         {
             Instance = this;
+            AnnouncerEventHandlers = new AnnouncerEventHandlers();
+            AnnouncerEventHandlers.Plugin = this;
             LoadTeamRoles();
             Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
@@ -526,14 +531,17 @@ namespace TeamDeathmatch
         {
             Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
             Exiled.Events.Handlers.Player.Spawned -= OnSpawned;
             Exiled.Events.Handlers.Player.Left -= OnLeft;
             Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
-            base.OnDisabled();
             Instance = null;
+            AnnouncerEventHandlers.Plugin = null;
+            AnnouncerEventHandlers = null;
+            base.OnDisabled();
         }
     }
 }

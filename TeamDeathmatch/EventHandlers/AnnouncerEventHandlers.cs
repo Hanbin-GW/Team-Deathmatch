@@ -102,7 +102,7 @@ namespace TeamDeathmatch.EventHandlers
 
             foreach (var player in Player.List.Where(p => GetTeamName(p) == newLeadingTeam))
             {
-                player.ShowHint($"<color=yellow>{newLeadingTeam} 어나운서: 우리가 선두를 잡았다!</color>");
+                player.ShowHint($"<color=yellow>{newLeadingTeam} Announcer: We taken the lead!</color>");
             }
         }
         private string GetTeamName(Player player)
