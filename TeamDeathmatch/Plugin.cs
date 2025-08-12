@@ -37,6 +37,8 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public AnnouncerEventHandlers AnnouncerEventHandlers;
         public static Plugin Instance { get; private set; }
+        private CoroutineHandle reversalCheckCoroutine;
+        private string lastLeadingTeam = null;
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnDeconStarted(DecontaminatingEventArgs ev)
         {
@@ -218,6 +220,39 @@ namespace TeamDeathmatch
                         TeamScores[attackerTeam] = 0;
 
                     TeamScores[attackerTeam]++;
+                    
+                    string currentLeadingTeam = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :  
+                        TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+                    if (currentLeadingTeam != null && currentLeadingTeam != lastLeadingTeam)
+                    {
+                        Log.Debug($"[TDM] Score lead change detected: {lastLeadingTeam} -> {currentLeadingTeam}");
+
+                        // Cancel if existing reverse check is undergoing
+                        if (reversalCheckCoroutine.IsRunning)
+                            Timing.KillCoroutines(reversalCheckCoroutine);
+                        
+                        reversalCheckCoroutine = Timing.CallDelayed(3f, () =>
+                        {
+                            string leading = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                                TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+                            if (leading == currentLeadingTeam)
+                            {
+                                AnnouncerEventHandlers.RunReversalEvent(leading);
+                                lastLeadingTeam = currentLeadingTeam;
+                            }
+                            /* 
+                            if (leading == currentLeadingTeam)
+                            {
+                                Log.Info($"[TDM] Reversal confirmed for {currentLeadingTeam}");
+                                AnnouncerEventHandlers.RunReversalEvent(currentLeadingTeam);
+                                lastLeadingTeam = currentLeadingTeam;
+                            }
+                            else
+                            {
+                                Log.Debug("[TDM] Reversal cancelled due to score flip");
+                            }*/
+                        });
+                    }
 
                     foreach (var p in Player.List)
                     {
@@ -256,6 +291,7 @@ namespace TeamDeathmatch
         {
             if (TdmStarted)
                 return;
+            lastLeadingTeam = null;
             foreach (var lift in Lift.List)
             {
                 lift.ChangeLock(DoorLockReason.Warhead);
