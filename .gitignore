@@ -1,5 +1,0 @@
-*.dll
-/TeamDeathmatch/obj/
-/TeamDeathmatch/bin/
-/packages/
-.DS_Store
