@@ -1,0 +1,6 @@
+*.dll
+/TeamDeathmatch/obj/
+/TeamDeathmatch/bin/
+/packages/
+.DS_Store
+TeamDeathmatch/TeamDeathmatch.csproj
