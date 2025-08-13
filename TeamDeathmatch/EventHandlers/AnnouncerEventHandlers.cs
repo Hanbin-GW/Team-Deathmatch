@@ -20,6 +20,9 @@ namespace TeamDeathmatch.EventHandlers
         public void OnPluginLoad()
         {
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"), "ChaosLoad");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", ""), "ChaosFail");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", ""), "Team1_WinningReversal");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", ""), "Team2_WinningReversal");
             // AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "ReadyToMove.ogg"), "MtfLoad");
         }
         public void EnsureMusicDirectoryExists()
@@ -64,9 +67,8 @@ namespace TeamDeathmatch.EventHandlers
 
             audioPlayer.AddClip(clipName);
         }
-        private void RunReversalEvent(string newLeadingTeam)
+        public void RunReversalEvent(string newLeadingTeam)
         {
-            // ✅ 역전한 팀용 오디오 플레이어
             AudioPlayer audioPlayerWinning = AudioPlayer.CreateOrGet(
                 $"Announcer_{newLeadingTeam}_Winning",
                 condition: (hub) =>
