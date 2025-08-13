@@ -34,9 +34,6 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="Assembly-CSharp">
-          <HintPath>..\..\..\Documents\LabAPI\Assembly-CSharp.dll</HintPath>
-        </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.8.0\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
         </Reference>
@@ -76,6 +73,9 @@
         <Reference Include="HintServiceMeow">
           <HintPath>..\..\..\Documents\LabAPI\HintServiceMeow-Exiled.dll</HintPath>
         </Reference>
+        <Reference Include="LabApi">
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\LabApi.dll</HintPath>
+        </Reference>
         <Reference Include="LabApi, Version=1.1.1.0, Culture=neutral, processorArchitecture=Amd64">
           <HintPath>..\packages\ExMod.Exiled.9.8.0\lib\net48\LabApi.dll</HintPath>
         </Reference>
@@ -83,11 +83,20 @@
           <HintPath>..\..\..\Documents\LabAPI\Mirror.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib" />
+        <Reference Include="NorthwoodLib">
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\NorthwoodLib.dll</HintPath>
+        </Reference>
         <Reference Include="NorthwoodLib, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.8.0\lib\net48\NorthwoodLib.dll</HintPath>
         </Reference>
         <Reference Include="NVorbis">
           <HintPath>..\..\..\Documents\AudioPlayerAPI\NVorbis.dll</HintPath>
+        </Reference>
+        <Reference Include="ProjectMER">
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\ProjectMER.dll</HintPath>
+        </Reference>
+        <Reference Include="RainbowTags">
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\RainbowTags.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Buffers">
@@ -110,15 +119,15 @@
         <Reference Include="System.ValueTuple">
           <HintPath>..\..\..\Documents\AudioPlayerAPI\System.ValueTuple.dll</HintPath>
         </Reference>
-        <Reference Include="System.Xml"/>
+        <Reference Include="System.Xml" />
         <Reference Include="UnityEngine">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.dll</HintPath>
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
-        <Reference Include="UnityEngine.PhysicsModule">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.PhysicsModule.dll</HintPath>
+        <Reference Include="YamlDotNet">
+          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\YamlDotNet.dll</HintPath>
         </Reference>
         <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.8.0\lib\net48\YamlDotNet.dll</HintPath>
