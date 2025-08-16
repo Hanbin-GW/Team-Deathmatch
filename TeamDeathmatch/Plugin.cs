@@ -200,7 +200,7 @@ namespace TeamDeathmatch
                 playerTeams[p] = "Team2";
                 p.Broadcast(5, "You are in C.I Team");
             }
-            scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
+            //scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
             Map.Broadcast(10, $"Team Deathmatch! The team that kills {Instance.Config.TeamScoreToWin} kills first wins.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
@@ -375,7 +375,8 @@ namespace TeamDeathmatch
 
         private void EndTdm(string winningTeam)
         {
-            Timing.KillCoroutines(scoreHintCoroutine);
+            if (scoreHintCoroutine.IsRunning)
+                Timing.KillCoroutines(scoreHintCoroutine);
 
             Map.Broadcast(10, $"{winningTeam} Win Restarting the round");
             TdmStarted = false;
