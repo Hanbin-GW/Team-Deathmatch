@@ -71,13 +71,10 @@
           <HintPath>..\packages\ExMod.Exiled.9.8.1\lib\net48\Exiled.Permissions.dll</HintPath>
         </Reference>
         <Reference Include="GhostPlugin">
-          <HintPath>..\..\GhostPlugin\GhostPlugin\obj\Release\GhostPlugin.dll</HintPath>
+          <HintPath>..\..\GhostPlugin\GhostPlugin\obj\Release\GhostPlugin-Eng.dll</HintPath>
         </Reference>
         <Reference Include="HintServiceMeow">
           <HintPath>..\..\..\Documents\LabAPI\HintServiceMeow-Exiled.dll</HintPath>
-        </Reference>
-        <Reference Include="LabApi">
-          <HintPath>..\packages\myDll\LabApi.dll</HintPath>
         </Reference>
         <Reference Include="LabApi, Version=1.1.1.0, Culture=neutral, processorArchitecture=Amd64">
           <HintPath>..\packages\ExMod.Exiled.9.8.1\lib\net48\LabApi.dll</HintPath>
@@ -94,12 +91,6 @@
         </Reference>
         <Reference Include="NVorbis">
           <HintPath>..\..\..\Documents\AudioPlayerAPI\NVorbis.dll</HintPath>
-        </Reference>
-        <Reference Include="ProjectMER">
-          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\ProjectMER.dll</HintPath>
-        </Reference>
-        <Reference Include="RainbowTags">
-          <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\RainbowTags.dll</HintPath>
         </Reference>
         <Reference Include="System" />
         <Reference Include="System.Buffers">
@@ -128,6 +119,9 @@
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
           <HintPath>..\packages\ExMod.Exiled.9.8.0\mydll\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+          <HintPath>..\..\..\Documents\LabAPI\UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
         <Reference Include="YamlDotNet">
           <HintPath>..\packages\myDll\YamlDotNet.dll</HintPath>

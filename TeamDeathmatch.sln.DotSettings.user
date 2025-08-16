@@ -13,7 +13,16 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FAudioPlayerAPI_002FSystem_002EValueTuple_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FAssembly_002DCSharp_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FHintServiceMeow_002DExiled_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FLabApi_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FMirror_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FNorthwoodLib_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FProjectMER_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FRainbowTags_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FUnityEngine_002ECoreModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FUnityEngine_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FUnityEngine_002EPhysicsModule_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FDocuments_002FLabAPI_002FYamlDotNet_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FGhostPlugin_002FGhostPlugin_002Fobj_002FRelease_002FGhostPlugin_002DEng_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FGhostPlugin_002FGhostPlugin_002Fobj_002FRelease_002FGhostPlugin_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FTeamDeathmatch_002Fpackages_002FAudioPlayerAPI_002FAudioPlayerApi_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002FUsers_002Fhanbin_002FRiderProjects_002FTeamDeathmatch_002Fpackages_002FAudioPlayerAPI_002FNVorbis_002Edll/@EntryIndexedValue">True</s:Boolean>
@@ -55,4 +64,5 @@
   &lt;Assembly Path="/Users/hanbin/Documents/14.0 dll/Assembly-CSharp-firstpass.dll" /&gt;
   &lt;Assembly Path="/Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/Assembly-CSharp.dll" /&gt;
   &lt;Assembly Path="/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/mono/4.5/mscorlib.dll" /&gt;
+  &lt;Assembly Path="/Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/GhostPlugin.dll" /&gt;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

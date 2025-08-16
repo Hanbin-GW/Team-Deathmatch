@@ -30,7 +30,7 @@ namespace TeamDeathmatch
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
         public override Version Version { get; } = new Version(2, 3, 10);
-        
+        private DateTime matchStartTime;
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
@@ -200,7 +200,7 @@ namespace TeamDeathmatch
                 playerTeams[p] = "Team2";
                 p.Broadcast(5, "You are in C.I Team");
             }
-
+            scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
             Map.Broadcast(10, $"Team Deathmatch! The team that kills {Instance.Config.TeamScoreToWin} kills first wins.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
         }
 
@@ -515,15 +515,32 @@ namespace TeamDeathmatch
         {
             while (TdmStarted)
             {
-                //string scoreText = $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>";
+                // 남은 시간 계산
+                TimeSpan elapsed = DateTime.Now - matchStartTime;
+                TimeSpan remaining = TimeSpan.FromMinutes(10) - elapsed;
+
+                if (remaining.TotalSeconds <= 0)
+                {
+                    // 시간이 다 됨
+                    string winner = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                        TeamScores["Team2"] > TeamScores["Team1"] ? "Team2" : null;
+
+                    if (winner == null)
+                        EndTdm("Draw");
+                    else
+                        EndTdm(winner);
+                    yield break;
+                }
+
                 string scoreText = "<size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
                                    $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
-                                   $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color>";
+                                   $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color>\n" +
+                                   $"<color=yellow>⏰ Time Left: {remaining.Minutes:D2}:{remaining.Seconds:D2}</color>";
+
                 foreach (var player in Player.List.Where(p => p.IsAlive))
                 {
                     var display = PlayerDisplay.Get(player);
                     display.RemoveHint("tdm_score");
-
                     display.AddHint(new Hint
                     {
                         Id = "tdm_score",
