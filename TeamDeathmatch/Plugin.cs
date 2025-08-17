@@ -29,8 +29,9 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 10);
+        public override Version Version { get; } = new Version(3, 0, 0,800);
         private DateTime matchStartTime;
+        public readonly List<CoroutineHandle> AudioTimers = new();
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
@@ -40,6 +41,8 @@ namespace TeamDeathmatch
         private CoroutineHandle reversalCheckCoroutine;
         private string lastLeadingTeam = null;
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
+        
+
         private void OnDeconStarted(DecontaminatingEventArgs ev)
         {
             if(TdmStarted == true)
@@ -160,7 +163,12 @@ namespace TeamDeathmatch
 
             TdmStarted = true;
             Round.IsLocked = true;
-            //Round.Start();
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.Zero, () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad"));
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ONE_MINUTE_LEFT"));
+
+            // 남은 10초(= 시작 9:50): 카운트다운 시작
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9).Add(TimeSpan.FromSeconds(50)), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","TEN_SECONDS_LEFT"));
+
             ZoneType[] zones = new[]
             {
                 ZoneType.LightContainment,
@@ -572,7 +580,7 @@ namespace TeamDeathmatch
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
-            Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
+            //Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
@@ -586,7 +594,7 @@ namespace TeamDeathmatch
         {
             Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
-            Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
+            //Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;

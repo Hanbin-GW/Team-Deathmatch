@@ -131,6 +131,9 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="DeathmatchAPI\API.cs" />
+        <Compile Include="Audio\AudioManager.cs" />
+        <Compile Include="Audio\TeamAudioProfile.cs" />
         <Compile Include="Commands\ScoreCommand.cs" />
         <Compile Include="Commands\SelfKillCommand.cs" />
         <Compile Include="Commands\StartTdmCommand.cs" />
