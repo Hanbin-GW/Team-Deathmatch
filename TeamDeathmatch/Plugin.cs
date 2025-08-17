@@ -164,6 +164,7 @@ namespace TeamDeathmatch
             TdmStarted = true;
             Round.IsLocked = true;
             AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.Zero, () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad"));
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.Zero, () => AnnouncerEventHandlers.PlayTeamStartAudio("Team1","ChaosLoad"));
             AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ONE_MINUTE_LEFT"));
 
             // 남은 10초(= 시작 9:50): 카운트다운 시작

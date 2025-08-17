@@ -2,7 +2,7 @@ using TeamDeathmatchAPI;
 namespace TeamDeathmatch.Audio
 {
     /// <summary>
-    /// 팀 상황별 오디오 클립 매핑을 담는 단순 데이터 클래스
+    /// Simple data class with team contextual audio clip mapping
     /// </summary>
     public class TeamAudioProfile
     {

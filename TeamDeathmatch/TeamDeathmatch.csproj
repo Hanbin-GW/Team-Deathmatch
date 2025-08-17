@@ -139,6 +139,7 @@
         <Compile Include="Commands\StartTdmCommand.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="EventHandlers\AnnouncerEventHandlers.cs" />
+        <Compile Include="Game\TdmManager.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

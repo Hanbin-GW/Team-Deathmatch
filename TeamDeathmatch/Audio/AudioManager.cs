@@ -1,4 +1,3 @@
-// Audio/AudioManager.cs
 using System;
 using System.Collections.Generic;
 using Exiled.API.Features;
@@ -8,7 +7,6 @@ namespace TeamDeathmatch.Audio
 {
     public static class AudioManager
     {
-        // 2) 팀별 플레이어/프로필/상태 캐시
         private static readonly Dictionary<string, AudioPlayer> _teamPlayers = new();
         private static readonly Dictionary<string, TeamAudioProfile> _teamProfiles = new();
         private static readonly Dictionary<string, API.TeamState> _lastTeamState = new();
@@ -56,7 +54,5 @@ namespace TeamDeathmatch.Audio
             _teamPlayers[teamName] = player;
             return player;
         }
-
-        // 여기서 PlayTeamStateAudio(...) 등 다른 오디오 관련 메서드도 함께 관리하면 깔끔합니다.
     }
 }

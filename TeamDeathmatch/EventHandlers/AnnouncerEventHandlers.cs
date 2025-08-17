@@ -35,7 +35,7 @@ namespace TeamDeathmatch.EventHandlers
             // Load audio files (Clip keys must match the profile below)
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"), "ChaosLoad");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"), "Team2Defeat");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"), "Team2Losing");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"), "CI_LOSING");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"), "Team2ClockTicking");
 
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "WinningReversal.ogg"), "Team1_WinningReversal");
@@ -76,7 +76,7 @@ namespace TeamDeathmatch.EventHandlers
             _teamProfiles["Team2"] = new TeamAudioProfile
             {
                 LeadingClip     = "CI_LEADING",
-                LosingClip      = "Team2Losing",       // Match top Load Clip
+                LosingClip      = "CI_LOSING", // Match top Load Clip
                 TiedClip        = "CI_TIED",
                 MatchPointClip  = "CI_MATCH_POINT",
                 VictoryClip     = "CI_VICTORY",
