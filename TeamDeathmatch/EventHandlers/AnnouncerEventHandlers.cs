@@ -34,7 +34,9 @@ namespace TeamDeathmatch.EventHandlers
             // Load audio files (Clip keys must match the profile below)
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"),   "Team2_Start");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"),   "Team2_Defeat");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"),      "Team2_Leading");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "SecureALEad.ogg"),    "Team2_Leading");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"),      "Team2_Losing");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "tied.ogg"),           "Team2_TIED");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"),  "Team2_ClockTick");
 
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "WinningReversal.ogg"), "Team1_WinningReversal");
@@ -76,7 +78,7 @@ namespace TeamDeathmatch.EventHandlers
             {
                 LeadingClip     = "Team2_Leading",
                 LosingClip      = "Team2_Losing", // Match top Load Clip
-                TiedClip        = "CI_TIED",
+                TiedClip        = "Team2_TIED",
                 MatchPointClip  = "Team2_ClockTick",
                 VictoryClip     = "CI_VICTORY",
                 DefeatClip      = "Team2_Defeat",        // Match top Load Clip
@@ -109,7 +111,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        /*private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        private void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;
@@ -125,8 +127,7 @@ namespace TeamDeathmatch.EventHandlers
 
             var player = EnsureTeamPlayer(teamName);
             player.AddClip(clip);
-        }*/
-
+        }
         public void PlayTeamStartAudio(string teamName, string clipName)
         {
             AudioPlayer audioPlayer = AudioPlayer.CreateOrGet(
