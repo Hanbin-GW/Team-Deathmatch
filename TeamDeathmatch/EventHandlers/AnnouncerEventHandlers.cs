@@ -111,7 +111,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        /*private void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;
@@ -127,7 +127,7 @@ namespace TeamDeathmatch.EventHandlers
 
             var player = EnsureTeamPlayer(teamName);
             player.AddClip(clip);
-        }
+        }*/
         public void PlayTeamStartAudio(string teamName, string clipName)
         {
             AudioPlayer audioPlayer = AudioPlayer.CreateOrGet(

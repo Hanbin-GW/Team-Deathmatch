@@ -587,7 +587,7 @@ namespace TeamDeathmatch
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Map.Decontaminating += OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
-            //Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers += OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified += OnVerified;
             Exiled.Events.Handlers.Player.Died += OnPlayerDied;
@@ -601,7 +601,7 @@ namespace TeamDeathmatch
         {
             Exiled.Events.Handlers.Map.Decontaminating -= OnDeconStarted;
             Exiled.Events.Handlers.Server.RoundStarted -= OnRoundStarted;
-            //Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
+            Exiled.Events.Handlers.Server.RoundStarted -= AnnouncerEventHandlers.OnRoundStarted;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.Verified -= OnVerified;
             Exiled.Events.Handlers.Player.Died -= OnPlayerDied;
