@@ -26,17 +26,16 @@ namespace TeamDeathmatch.EventHandlers
             AudioDirectory = Path.Combine(appDataPath, "EXILED", "Plugins", "DeathMatch");
         }
 
-        // ----- 초기화/로드 -----
         public void OnPluginLoad()
         {
             EnsureMusicDirectoryExists();
             InitTeamAudioProfiles();
 
             // Load audio files (Clip keys must match the profile below)
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"), "ChaosLoad");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"), "Team2Defeat");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"), "CI_LOSING");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"), "Team2ClockTicking");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"),   "Team2_Start");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"),   "Team2_Defeat");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"),      "Team2_Leading");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"),  "Team2_ClockTick");
 
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "WinningReversal.ogg"), "Team1_WinningReversal");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "WinningReversal.ogg"), "Team2_WinningReversal");
@@ -75,12 +74,12 @@ namespace TeamDeathmatch.EventHandlers
             // Profile for Team 2 (Chaos)
             _teamProfiles["Team2"] = new TeamAudioProfile
             {
-                LeadingClip     = "CI_LEADING",
-                LosingClip      = "CI_LOSING", // Match top Load Clip
+                LeadingClip     = "Team2_Leading",
+                LosingClip      = "Team2_Losing", // Match top Load Clip
                 TiedClip        = "CI_TIED",
-                MatchPointClip  = "CI_MATCH_POINT",
+                MatchPointClip  = "Team2_ClockTick",
                 VictoryClip     = "CI_VICTORY",
-                DefeatClip      = "Team2Defeat",        // Match top Load Clip
+                DefeatClip      = "Team2_Defeat",        // Match top Load Clip
             };
         }
 
@@ -110,7 +109,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        /*private void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;
@@ -126,20 +125,29 @@ namespace TeamDeathmatch.EventHandlers
 
             var player = EnsureTeamPlayer(teamName);
             player.AddClip(clip);
-        }
+        }*/
 
-        // ----- Start-up bobble playback -----
         public void PlayTeamStartAudio(string teamName, string clipName)
         {
-            if (string.IsNullOrWhiteSpace(teamName) || string.IsNullOrWhiteSpace(clipName))
-            {
-                Log.Warn($"[Announcer] invalid args: team='{teamName}', clip='{clipName}'");
-                return;
-            }
+            AudioPlayer audioPlayer = AudioPlayer.CreateOrGet(
+                $"Announcer_{teamName}",
+                condition: (hub) =>
+                {
+                    Player player = Player.Get(hub);
+                    return player != null
+                           && Plugin.Instance.playerTeams.ContainsKey(player)
+                           && Plugin.Instance.playerTeams[player] == teamName;
+                },
+                onIntialCreation: (p) =>
+                {
+                    Speaker speaker = p.AddSpeaker("Main", isSpatial: false, maxDistance: 5000f);
+                }
+            );
 
-            var audioPlayer = EnsureTeamPlayer(teamName);
             audioPlayer.AddClip(clipName);
         }
+
+
 
         // ----- reversal event -----
         public void RunReversalEvent(string newLeadingTeam)
@@ -217,14 +225,16 @@ namespace TeamDeathmatch.EventHandlers
             Plugin.Instance.AudioTimers.Add(h);
         }
 
-        // ----- No More Use -----
-        /*public void OnRoundStarted()
+        public void OnRoundStarted()
         {
-            // 필요 시 라운드 시작 시점에서 테스트 재생
-            // PlayTeamStartAudio("Team2", "ChaosLoad");
-            // PlayTeamStartAudio("Team1", "MtfLoad");
-        }*/
-
+            // 라운드 시작 직후는 playerTeams가 비어있을 수 있으니 약간 딜레이
+            ScheduleAudioAfter(TimeSpan.FromSeconds(2), () =>
+            {
+                PlayTeamStartAudio("Team2", "Team2_Start");
+                PlayTeamStartAudio("Team1", "Team2_Start"); // Team1 전용 시작음이 없으면 임시로 같은 키 사용
+                Log.Info($"[Announcer] RoundStart start-audio fired from: {AudioDirectory}");
+            });
+        }
         private string GetTeamName(Player player)
         {
             return player.Role.Team switch

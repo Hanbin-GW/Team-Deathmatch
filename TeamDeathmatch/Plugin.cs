@@ -163,13 +163,13 @@ namespace TeamDeathmatch
 
             TdmStarted = true;
             Round.IsLocked = true;
-            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.Zero, () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad"));
-            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.Zero, () => AnnouncerEventHandlers.PlayTeamStartAudio("Team1","ChaosLoad"));
+            //AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad");
+            //AnnouncerEventHandlers.PlayTeamStartAudio("Team1","ChaosLoad");
             AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ONE_MINUTE_LEFT"));
 
             // 남은 10초(= 시작 9:50): 카운트다운 시작
             AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9).Add(TimeSpan.FromSeconds(50)), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","TEN_SECONDS_LEFT"));
-
+            matchStartTime = DateTime.Now;
             ZoneType[] zones = new[]
             {
                 ZoneType.LightContainment,
@@ -211,6 +211,12 @@ namespace TeamDeathmatch
             }
             //scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
             Map.Broadcast(10, $"Team Deathmatch! The team that kills {Instance.Config.TeamScoreToWin} kills first wins.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
+            // StartTdm() 팀 배정 및 Broadcast 끝난 직후
+            Timing.CallDelayed(1f, () =>
+            {
+                AnnouncerEventHandlers.PlayTeamStartAudio("Team2","Team2_Start");
+                // AnnouncerEventHandlers.PlayTeamStartAudio("Team1","Team1_Start");
+            });
         }
 
         public void OnPlayerDied(DiedEventArgs ev)

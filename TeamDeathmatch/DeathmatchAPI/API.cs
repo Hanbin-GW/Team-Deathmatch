@@ -4,17 +4,17 @@ namespace TeamDeathmatchAPI
     {
         public enum TeamState
         {
-            Leading,   // 리드 중
-            Losing,    // 지는 중
-            Tied,      // 동점
-            MatchPoint,// 매치포인트(승점 1 남음)
-            Victory,   // 승리
-            Defeat     // 패배
+            Leading,   // Leading
+            Losing,    // Losing
+            Tied,      // Tied
+            MatchPoint,// MatchPoint
+            Victory,   // Victory
+            Defeat     // Lost
         }
         
         public sealed class TeamAudioProfile
         {
-            // 상황별로 재생할 클립 키(= 소스)
+            // Clip key (= source) to play contextually
             public string LeadingClip { get; init; }
             public string LosingClip { get; init; }
             public string TiedClip { get; init; }

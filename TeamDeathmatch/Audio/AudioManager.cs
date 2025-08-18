@@ -33,7 +33,7 @@ namespace TeamDeathmatch.Audio
             };
         }
 
-        private static AudioPlayer EnsureTeamPlayer(string teamName)
+        /*private static AudioPlayer EnsureTeamPlayer(string teamName)
         {
             if (_teamPlayers.TryGetValue(teamName, out var p)) return p;
 
@@ -53,6 +53,6 @@ namespace TeamDeathmatch.Audio
             );
             _teamPlayers[teamName] = player;
             return player;
-        }
+        }*/
     }
 }
