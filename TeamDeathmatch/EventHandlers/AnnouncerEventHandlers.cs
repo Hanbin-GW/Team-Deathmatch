@@ -34,29 +34,47 @@ namespace TeamDeathmatch.EventHandlers
             // Load audio files (Clip keys must match the profile below)
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"),   "Team2_Start");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"),   "Team2_Defeat");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "SecureALEad.ogg"),    "Team2_Leading");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "TakenLead.ogg"),      "Team2_Leading");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"),      "Team2_Losing");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "tied.ogg"),           "Team2_TIED");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"),  "Team2_ClockTick");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "tensec(2).ogg"),  "TEN_SECONDS_LEFT");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"),  "Team2_ClockTick");
 
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "WinningReversal.ogg"), "Team1_WinningReversal");
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "WinningReversal.ogg"), "Team2_WinningReversal");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "TakenLead.ogg"), "Team2_WinningReversal");
         }
 
         private void EnsureMusicDirectoryExists()
         {
-            string path = Path.Combine(
+            string rootPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "EXILED", "Plugins", "DeathMatch");
 
-            if (!Directory.Exists(path))
+            string opforPath = Path.Combine(rootPath, "Opfor");
+            string tf141Path = Path.Combine(rootPath, "tf141");
+
+            // 최상위 폴더 체크
+            if (!Directory.Exists(rootPath))
             {
-                Log.Warn($"music folder is not existed. creating: {path}");
-                Directory.CreateDirectory(path);
+                Log.Warn($"[Announcer] Root music folder not found, creating: {rootPath}");
+                Directory.CreateDirectory(rootPath);
             }
             else
             {
-                Log.Info("music folder already exists.");
+                Log.Info("[Announcer] Root music folder already exists.");
+            }
+
+            // 하위 폴더 체크
+            if (!Directory.Exists(opforPath))
+            {
+                Log.Warn($"[Announcer] Missing subfolder 'Opfor'. Creating: {opforPath}");
+                Directory.CreateDirectory(opforPath);
+            }
+            if (!Directory.Exists(tf141Path))
+            {
+                Log.Warn($"[Announcer] Missing subfolder 'tf141'. Creating: {tf141Path}");
+                Directory.CreateDirectory(tf141Path);
             }
         }
 
@@ -111,7 +129,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        /*private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        private void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;
@@ -127,8 +145,8 @@ namespace TeamDeathmatch.EventHandlers
 
             var player = EnsureTeamPlayer(teamName);
             player.AddClip(clip);
-        }*/
-        public void PlayTeamStartAudio(string teamName, string clipName)
+        }
+        /*public void PlayTeamStartAudio(string teamName, string clipName)
         {
             AudioPlayer audioPlayer = AudioPlayer.CreateOrGet(
                 $"Announcer_{teamName}",
@@ -146,19 +164,50 @@ namespace TeamDeathmatch.EventHandlers
             );
 
             audioPlayer.AddClip(clipName);
+        }*/
+        public void PlayTeamStartAudio(string teamName, string clipName)
+        {
+            AudioPlayer audioPlayer = AudioPlayer.CreateOrGet(
+                $"Announcer_{teamName}",
+                condition: hub =>
+                {
+                    Player player = Player.Get(hub);
+                    if (player == null) return false;
+
+                    // 1) playerTeams 매핑이 있으면 그것으로 필터
+                    if (Plugin.Instance.playerTeams.TryGetValue(player, out var mapped))
+                        return mapped == teamName;
+
+                    // 2) 매핑 전이면 Role.Team으로 폴백
+                    return teamName switch
+                    {
+                        "Team1" => player.Role.Team == Team.FoundationForces,
+                        "Team2" => player.Role.Team == Team.ChaosInsurgency,
+                        _ => false
+                    };
+                },
+                onIntialCreation: p => p.AddSpeaker("Main", isSpatial: false, maxDistance: 5000f)
+            );
+
+            audioPlayer.AddClip(clipName); // AddClip 후 자동 재생 환경이라고 했으니 OK
         }
+
 
 
 
         // ----- reversal event -----
         public void RunReversalEvent(string newLeadingTeam)
         {
-            if (string.IsNullOrWhiteSpace(newLeadingTeam))
-                return;
+            if (string.IsNullOrWhiteSpace(newLeadingTeam)) return;
 
             var losingTeam = newLeadingTeam == "Team1" ? "Team2" : "Team1";
 
-            // Lead Team: Reversal Victory Clips
+            // 디버그: 해당 팀으로 매핑된 인원 수 체크
+            int winCnt = Player.List.Count(pl => Plugin.Instance.playerTeams.TryGetValue(pl, out var t) && t == newLeadingTeam);
+            int loseCnt = Player.List.Count(pl => Plugin.Instance.playerTeams.TryGetValue(pl, out var t) && t == losingTeam);
+            Log.Info($"[Announcer] Reversal -> lead:{newLeadingTeam}({winCnt} players), lose:{losingTeam}({loseCnt} players)");
+
+            // 윈팀 플레이어
             var winningPlayer = AudioPlayer.CreateOrGet(
                 $"Announcer_{newLeadingTeam}_Winning",
                 condition: hub =>
@@ -171,11 +220,9 @@ namespace TeamDeathmatch.EventHandlers
                 onIntialCreation: p => p.AddSpeaker("Main", isSpatial: false, maxDistance: 5000f)
             );
 
-            winningPlayer.AddClip(newLeadingTeam == "Team1"
-                ? "Team1_WinningReversal"
-                : "Team2_WinningReversal");
+            winningPlayer.AddClip(newLeadingTeam == "Team1" ? "Team1_WinningReversal" : "Team2_WinningReversal");
 
-            // Losing Team: Losing/Warning Clips
+            // 루징팀 플레이어
             var losingPlayer = AudioPlayer.CreateOrGet(
                 $"Announcer_{losingTeam}_Losing",
                 condition: hub =>
@@ -188,13 +235,12 @@ namespace TeamDeathmatch.EventHandlers
                 onIntialCreation: p => p.AddSpeaker("Main", isSpatial: false, maxDistance: 5000f)
             );
 
-            // Example for Team 2: "Team2Losing" Already LoadCliped. Register Team1 with the right package if needed.
-            losingPlayer.AddClip(losingTeam == "Team2" ? "Team2Losing" : "MTF_LOSING");
+            losingPlayer.AddClip(losingTeam == "Team2" ? "Team2_Losing" : "MTF_LOSING");
 
-            // Showing hint
             foreach (var p in Player.List.Where(p => GetTeamName(p) == newLeadingTeam))
                 p.ShowHint($"<color=yellow>{newLeadingTeam} Announcer: We have taken the lead!</color>");
         }
+
 
         // ----- Timer Util -----
         public void CancelAudioTimers()
