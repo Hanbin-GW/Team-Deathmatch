@@ -30,13 +30,13 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(2, 3, 6);
-        
+        public override Version Version { get; } = new Version(3, 0, 0,900);
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
         public ZoneType StartZone;
         public AnnouncerEventHandlers AnnouncerEventHandlers;
+        public readonly List<CoroutineHandle> AudioTimers = new();
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
