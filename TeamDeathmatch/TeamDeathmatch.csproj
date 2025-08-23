@@ -38,7 +38,7 @@
           <HintPath>..\..\..\Documents\LabAPI\Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp-firstpass">
-          <HintPath>..\..\..\Documents\14.0 dll\Assembly-CSharp-firstpass.dll</HintPath>
+          <HintPath>..\..\..\Documents\LabAPI\Assembly-CSharp-firstpass.dll</HintPath>
         </Reference>
         <Reference Include="AudioPlayerApi">
           <HintPath>..\..\..\Documents\AudioPlayerAPI\AudioPlayerApi.dll</HintPath>
@@ -109,13 +109,13 @@
         </Reference>
         <Reference Include="System.Xml"/>
         <Reference Include="UnityEngine">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.dll</HintPath>
+          <HintPath>..\..\..\Documents\LabAPI\UnityEngine.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.CoreModule.dll</HintPath>
+          <HintPath>..\..\..\Documents\LabAPI\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
         <Reference Include="UnityEngine.PhysicsModule">
-          <HintPath>..\..\..\Documents\14.0 dll\UnityEngine.PhysicsModule.dll</HintPath>
+          <HintPath>..\..\..\Documents\LabAPI\UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
         <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
           <HintPath>..\packages\ExMod.Exiled.9.7.1\lib\net48\YamlDotNet.dll</HintPath>
@@ -126,6 +126,7 @@
         <Compile Include="Commands\SelfKillCommand.cs" />
         <Compile Include="Commands\StartTdmCommand.cs" />
         <Compile Include="Config.cs" />
+        <Compile Include="DeathmatchAPI\API.cs" />
         <Compile Include="EventHandlers\AnnouncerEventHandlers.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
