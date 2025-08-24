@@ -37,6 +37,8 @@ namespace TeamDeathmatch
         public ZoneType StartZone;
         public AnnouncerEventHandlers AnnouncerEventHandlers;
         public readonly List<CoroutineHandle> AudioTimers = new();
+        private DateTime matchStartTime;
+        private CoroutineHandle reversalCheckCoroutine;
         public static Plugin Instance { get; private set; }
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
@@ -138,13 +140,19 @@ namespace TeamDeathmatch
         {
             if (WaitingPlayers.Count < 2)
             {
-                Log.Warn("[TDM] 시작할 인원이 부족합니다.");
+                Log.Warn("[TDM] Don't have enough people to start.");
                 return;
             }
 
             TdmStarted = true;
             Round.IsLocked = true;
-            //Round.Start();
+            //AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad");
+            //AnnouncerEventHandlers.PlayTeamStartAudio("Team1","ChaosLoad");
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ONE_MINUTE_LEFT"));
+
+            // 남은 10초(= 시작 9:50): 카운트다운 시작
+            AnnouncerEventHandlers.ScheduleAudioAfter(TimeSpan.FromMinutes(9).Add(TimeSpan.FromSeconds(50)), () => AnnouncerEventHandlers.PlayTeamStartAudio("Team2","TEN_SECONDS_LEFT"));
+            matchStartTime = DateTime.Now;
             ZoneType[] zones = new[]
             {
                 ZoneType.LightContainment,
@@ -161,7 +169,7 @@ namespace TeamDeathmatch
             TeamScores["Team1"] = 0;
             TeamScores["Team2"] = 0;
             scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
-            Log.Info($"[TDM] 이번 라운드는 {StartZone} 구역에서 진행됩니다.");
+            Log.Info($"[TDM] This round's battle zone is :{StartZone}.");
             //Map.Broadcast(10, $"<b><color=yellow>{StartZone}</color></b> 구역에서 전투가 시작됩니다!");
             
             var shuffled = WaitingPlayers.OrderBy(x => UnityEngine.Random.value).ToList();
@@ -184,10 +192,15 @@ namespace TeamDeathmatch
                 playerTeams[p] = "Team2";
                 p.Broadcast(5, "당신은 카오스 팀입니다!");
             }
-
+            //scoreHintCoroutine = Timing.RunCoroutine(ShowScoreHints());
             Map.Broadcast(10, $"Team Deathmatch 시작! {Instance.Config.TeamScoreToWin}킬 먼저 하는 팀이 승리합니다.\n전투위치: <b><color=yellow>{StartZone}</color></b>");
+            // StartTdm() 팀 배정 및 Broadcast 끝난 직후
+            Timing.CallDelayed(1f, () =>
+            {
+                AnnouncerEventHandlers.PlayTeamStartAudio("Team2","Team2_Start");
+                // AnnouncerEventHandlers.PlayTeamStartAudio("Team1","Team1_Start");
+            });
         }
-
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (!TdmStarted) return;
@@ -204,6 +217,39 @@ namespace TeamDeathmatch
                         TeamScores[attackerTeam] = 0;
 
                     TeamScores[attackerTeam]++;
+                    
+                    string currentLeadingTeam = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :  
+                        TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+                    if (currentLeadingTeam != null && currentLeadingTeam != lastLeadingTeam)
+                    {
+                        Log.Debug($"[TDM] Score lead change detected: {lastLeadingTeam} -> {currentLeadingTeam}");
+
+                        // Cancel if existing reverse check is undergoing
+                        if (reversalCheckCoroutine.IsRunning)
+                            Timing.KillCoroutines(reversalCheckCoroutine);
+                        
+                        reversalCheckCoroutine = Timing.CallDelayed(3f, () =>
+                        {
+                            string leading = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                                TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+                            if (leading == currentLeadingTeam)
+                            {
+                                AnnouncerEventHandlers.RunReversalEvent(leading);
+                                lastLeadingTeam = currentLeadingTeam;
+                            }
+                            /* 
+                            if (leading == currentLeadingTeam)
+                            {
+                                Log.Info($"[TDM] Reversal confirmed for {currentLeadingTeam}");
+                                AnnouncerEventHandlers.RunReversalEvent(currentLeadingTeam);
+                                lastLeadingTeam = currentLeadingTeam;
+                            }
+                            else
+                            {
+                                Log.Debug("[TDM] Reversal cancelled due to score flip");
+                            }*/
+                        });
+                    }
 
                     foreach (var p in Player.List)
                     {
@@ -490,15 +536,32 @@ namespace TeamDeathmatch
         {
             while (TdmStarted)
             {
-                //string scoreText = $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>";
+                // 남은 시간 계산
+                TimeSpan elapsed = DateTime.Now - matchStartTime;
+                TimeSpan remaining = TimeSpan.FromMinutes(10) - elapsed;
+
+                if (remaining.TotalSeconds <= 0)
+                {
+                    // 시간이 다 됨
+                    string winner = TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                        TeamScores["Team2"] > TeamScores["Team1"] ? "Team2" : null;
+
+                    if (winner == null)
+                        EndTdm("Draw");
+                    else
+                        EndTdm(winner);
+                    yield break;
+                }
+
                 string scoreText = "<size=130%><b>⚔ TEAM SCORE ⚔</b></size>\n" +
                                    $"<color=#4FA9FF><b>MTF: {TeamScores["Team1"]}</b></color>  |  " +
-                                   $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color>";
+                                   $"<color=#58D68D><b>CI: {TeamScores["Team2"]}</b></color>\n" +
+                                   $"<color=yellow>⏰ Time Left: {remaining.Minutes:D2}:{remaining.Seconds:D2}</color>";
+
                 foreach (var player in Player.List.Where(p => p.IsAlive))
                 {
                     var display = PlayerDisplay.Get(player);
                     display.RemoveHint("tdm_score");
-
                     display.AddHint(new Hint
                     {
                         Id = "tdm_score",
@@ -512,8 +575,6 @@ namespace TeamDeathmatch
                 yield return Timing.WaitForSeconds(1f);
             }
         }
-
-
         private void OnWaitingForPlayers()
         {
             Round.IsLocked = true;
@@ -525,7 +586,7 @@ namespace TeamDeathmatch
             Instance = this;
             AnnouncerEventHandlers = new AnnouncerEventHandlers();
             AnnouncerEventHandlers.Plugin = this;
-            AnnouncerEventHandlers.EnsureMusicDirectoryExists();
+            //AnnouncerEventHandlers.EnsureMusicDirectoryExists();
             LoadTeamRoles();
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;

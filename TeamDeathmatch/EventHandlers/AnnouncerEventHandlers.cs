@@ -45,7 +45,7 @@ namespace TeamDeathmatch.EventHandlers
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "TakenLead.ogg"), "Team2_WinningReversal");
         }
 
-        public void EnsureMusicDirectoryExists()
+        private void EnsureMusicDirectoryExists()
         {
             string rootPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -83,7 +83,7 @@ namespace TeamDeathmatch.EventHandlers
             // Profile for Team 1 (MTF)
             _teamProfiles["Team1"] = new TeamAudioProfile
             {
-                LeadingClip     = "MTF_LEADING",        // need to chance to registared audio key
+                LeadingClip     = "MTF_LEADING",
                 LosingClip      = "MTF_LOSING",
                 TiedClip        = "MTF_TIED",
                 MatchPointClip  = "MTF_MATCH_POINT",
@@ -95,7 +95,7 @@ namespace TeamDeathmatch.EventHandlers
             _teamProfiles["Team2"] = new TeamAudioProfile
             {
                 LeadingClip     = "Team2_Leading",
-                LosingClip      = "Team2_Losing", // Match top Load Clip
+                LosingClip      = "Team2_Losing",
                 TiedClip        = "Team2_TIED",
                 MatchPointClip  = "Team2_ClockTick",
                 VictoryClip     = "CI_VICTORY",
@@ -238,7 +238,7 @@ namespace TeamDeathmatch.EventHandlers
             losingPlayer.AddClip(losingTeam == "Team2" ? "Team2_Losing" : "MTF_LOSING");
 
             foreach (var p in Player.List.Where(p => GetTeamName(p) == newLeadingTeam))
-                p.ShowHint($"<color=yellow>{newLeadingTeam} Announcer: We have taken the lead!</color>");
+                p.ShowHint($"<color=yellow>{newLeadingTeam} 어나운서: 우리가 선두를 잡았다!</color>");
         }
 
 
