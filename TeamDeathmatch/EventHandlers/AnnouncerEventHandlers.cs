@@ -26,13 +26,21 @@ namespace TeamDeathmatch.EventHandlers
             AudioDirectory = Path.Combine(appDataPath, "EXILED", "Plugins", "DeathMatch");
         }
 
+        /// <summary>
+        /// 상태 캐시 초기화 (TDM 시작 시점에 호출)
+        /// </summary>
+        public void ResetTeamStateCache()
+        {
+            _lastTeamState.Clear();
+            Log.Debug("[Announcer] TeamState cache reset.");
+        }
         public void OnPluginLoad()
         {
             EnsureMusicDirectoryExists();
             InitTeamAudioProfiles();
 
             // Load audio files (Clip keys must match the profile below)
-            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"),   "Team2_Start");
+                AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LoadUpLetsGo.ogg"),   "Team2_Start");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "Returntobase.ogg"),   "Team2_Defeat");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "TakenLead.ogg"),      "Team2_Leading");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "EnemyLead.ogg"),      "Team2_Losing");
@@ -86,7 +94,7 @@ namespace TeamDeathmatch.EventHandlers
                 LeadingClip     = "MTF_LEADING",
                 LosingClip      = "MTF_LOSING",
                 TiedClip        = "MTF_TIED",
-                MatchPointClip  = "MTF_MATCH_POINT",
+                HitHardClip  = "MTF_MATCH_POINT",
                 VictoryClip     = "MTF_VICTORY",
                 DefeatClip      = "MTF_DEFEAT",
             };
@@ -97,7 +105,7 @@ namespace TeamDeathmatch.EventHandlers
                 LeadingClip     = "Team2_Leading",
                 LosingClip      = "Team2_Losing",
                 TiedClip        = "Team2_TIED",
-                MatchPointClip  = "Team2_ClockTick",
+                HitHardClip  = "Team2_ClockTick",
                 VictoryClip     = "CI_VICTORY",
                 DefeatClip      = "Team2_Defeat",        // Match top Load Clip
             };
@@ -129,7 +137,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        public void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;
@@ -186,7 +194,7 @@ namespace TeamDeathmatch.EventHandlers
                         _ => false
                     };
                 },
-                onIntialCreation: p => p.AddSpeaker("Main", isSpatial: false, maxDistance: 5000f)
+                onIntialCreation: p => p.AddSpeaker("Main", isSpatial: true, maxDistance: 5000f)
             );
 
             audioPlayer.AddClip(clipName); // AddClip 후 자동 재생 환경이라고 했으니 OK

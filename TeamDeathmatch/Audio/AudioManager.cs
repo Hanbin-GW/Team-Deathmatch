@@ -18,7 +18,7 @@ namespace TeamDeathmatch.Audio
                 LeadingClip     = "MTF_LEADING",
                 LosingClip      = "MTF_LOSING",
                 TiedClip        = "MTF_TIED",
-                MatchPointClip  = "MTF_MATCH_POINT",
+                HitHardClip     = "MTF_MATCH_POINT",
                 VictoryClip     = "MTF_VICTORY",
                 DefeatClip      = "MTF_DEFEAT",
             };
@@ -27,13 +27,13 @@ namespace TeamDeathmatch.Audio
                 LeadingClip     = "CI_LEADING",
                 LosingClip      = "CI_LOSING",
                 TiedClip        = "CI_TIED",
-                MatchPointClip  = "CI_MATCH_POINT",
+                HitHardClip     = "CI_MATCH_POINT",
                 VictoryClip     = "CI_VICTORY",
                 DefeatClip      = "CI_DEFEAT",
             };
         }
 
-        /*private static AudioPlayer EnsureTeamPlayer(string teamName)
+        private static AudioPlayer EnsureTeamPlayer(string teamName)
         {
             if (_teamPlayers.TryGetValue(teamName, out var p)) return p;
 
@@ -53,6 +53,6 @@ namespace TeamDeathmatch.Audio
             );
             _teamPlayers[teamName] = player;
             return player;
-        }*/
+        }
     }
 }

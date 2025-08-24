@@ -143,7 +143,7 @@ namespace TeamDeathmatch
                 Log.Warn("[TDM] Don't have enough people to start.");
                 return;
             }
-
+            AnnouncerEventHandlers.ResetTeamStateCache();
             TdmStarted = true;
             Round.IsLocked = true;
             //AnnouncerEventHandlers.PlayTeamStartAudio("Team2","ChaosLoad");
@@ -201,14 +201,13 @@ namespace TeamDeathmatch
                 // AnnouncerEventHandlers.PlayTeamStartAudio("Team1","Team1_Start");
             });
         }
-        public void OnPlayerDied(DiedEventArgs ev)
+        /*public void OnPlayerDied(DiedEventArgs ev)
         {
             if (!TdmStarted) return;
 
             if (!playerTeams.TryGetValue(ev.Player, out var team))
                 return;
 
-            // ✅ Score logic only when 'attackers exist'
             if (ev.Attacker is Player attacker && attacker != ev.Player)
             {
                 if (playerTeams.TryGetValue(attacker, out string attackerTeam))
@@ -237,17 +236,6 @@ namespace TeamDeathmatch
                                 AnnouncerEventHandlers.RunReversalEvent(leading);
                                 lastLeadingTeam = currentLeadingTeam;
                             }
-                            /* 
-                            if (leading == currentLeadingTeam)
-                            {
-                                Log.Info($"[TDM] Reversal confirmed for {currentLeadingTeam}");
-                                AnnouncerEventHandlers.RunReversalEvent(currentLeadingTeam);
-                                lastLeadingTeam = currentLeadingTeam;
-                            }
-                            else
-                            {
-                                Log.Debug("[TDM] Reversal cancelled due to score flip");
-                            }*/
                         });
                     }
 
@@ -276,6 +264,113 @@ namespace TeamDeathmatch
                 ev.Player.ClearInventory();
                 GiveLoadout(ev.Player);
                 ev.Player.Position = GetSpawnPointForTeam(team); // ⬅ 여기도 수정 필요!
+            });
+        }*/
+
+        public void OnPlayerDied(DiedEventArgs ev)
+        {
+            if (!TdmStarted) return;
+
+            if (!playerTeams.TryGetValue(ev.Player, out var team))
+                return;
+            if (ev.Attacker is Player attacker && attacker != ev.Player)
+            {
+                if (playerTeams.TryGetValue(attacker, out string attackerTeam))
+                {
+                    if (!TeamScores.ContainsKey("Team1")) TeamScores["Team1"] = 0;
+                    if (!TeamScores.ContainsKey("Team2")) TeamScores["Team2"] = 0;
+
+                    if (!TeamScores.ContainsKey(attackerTeam))
+                        TeamScores[attackerTeam] = 0;
+
+                    TeamScores[attackerTeam]++;
+
+                    // ── A) 점수 상황에 따른 상태 음성 재생 ───────────────────────
+                    // 리드/루징/동점
+                    if (TeamScores["Team1"] > TeamScores["Team2"])
+                    {
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Leading);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Losing);
+                    }
+                    else if (TeamScores["Team2"] > TeamScores["Team1"])
+                    {
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Leading);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Losing);
+                    }
+                    else
+                    {
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Tied);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Tied);
+                    }
+
+                    // 매치포인트(승점 1 남음)
+                    int target = Instance.Config.TeamScoreToWin;
+                    if (TeamScores["Team1"] == target - 5)
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.HitHard);
+                    if (TeamScores["Team2"] == target - 5)
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.HitHard);
+
+                    // ── B) 리버설(선두 바뀜) 감지 & 3초 안정화 후 확정 ─────────────
+                    string currentLeadingTeam =
+                        TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                        TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+
+                    if (currentLeadingTeam != null && currentLeadingTeam != lastLeadingTeam)
+                    {
+                        Log.Debug($"[TDM] Score lead change detected: {lastLeadingTeam} -> {currentLeadingTeam}");
+
+                        // 이전 코루틴 안전 종료
+                        if (reversalCheckCoroutine.IsRunning)
+                            Timing.KillCoroutines(reversalCheckCoroutine);
+
+                        reversalCheckCoroutine = Timing.CallDelayed(3f, () =>
+                        {
+                            string leadingNow =
+                                TeamScores["Team1"] > TeamScores["Team2"] ? "Team1" :
+                                TeamScores["Team1"] < TeamScores["Team2"] ? "Team2" : null;
+
+                            if (leadingNow == currentLeadingTeam)
+                            {
+                                // 리버설 전용 음성(이기는 팀/지는 팀) + 힌트
+                                AnnouncerEventHandlers.RunReversalEvent(leadingNow);
+                                lastLeadingTeam = currentLeadingTeam;
+                            }
+                        });
+                    }
+
+                    // ── C) HUD 점수 힌트 ────────────────────────────────────────
+                    foreach (var p in Player.List)
+                    {
+                        p.ShowHint(
+                            $"<b><color=blue>MTF: {TeamScores["Team1"]}</color> | <color=green>CI: {TeamScores["Team2"]}</color></b>",
+                            3f
+                        );
+                    }
+
+                    // ── D) 승리 조건 충족 → 승/패 음성 + 종료 ─────────────────────
+                    if (TeamScores[attackerTeam] >= target)
+                    {
+                        // 상태 기반 승/패 음성
+                        AnnouncerEventHandlers.PlayTeamStateAudio(attackerTeam,
+                            TeamDeathmatchAPI.API.TeamState.Victory);
+                        string loser = attackerTeam == "Team1" ? "Team2" : "Team1";
+                        AnnouncerEventHandlers.PlayTeamStateAudio(loser, TeamDeathmatchAPI.API.TeamState.Defeat);
+
+                        EndTdm(attackerTeam);
+                        return;
+                    }
+                }
+            }
+
+            // ✅ 리스폰(그대로 유지)
+            Timing.CallDelayed(5f, () =>
+            {
+                if (ev.Player == null || !ev.Player.IsConnected) return;
+
+                ev.Player.Role.Set(team == "Team1" ? RoleTypeId.NtfSergeant : RoleTypeId.ChaosRifleman);
+                ev.Player.ClearInventory();
+                GiveLoadout(ev.Player);
+                ev.Player.Position = GetSpawnPointForTeam(team);
             });
         }
 
@@ -386,13 +481,14 @@ namespace TeamDeathmatch
         private void EndTdm(string winningTeam)
         {
             Timing.KillCoroutines(scoreHintCoroutine);
-
+            AnnouncerEventHandlers.ResetTeamStateCache();
             Map.Broadcast(10, $"{winningTeam} 승리! 라운드를 재시작합니다.");
             TdmStarted = false;
             // 이건 그대로 유지
             Timing.CallDelayed(5f, () => Round.Restart());
             ResetTdmState();
         }
+
         
         /*private Vector3 GetSpawnPointForTeam(string team)
         {

@@ -7,7 +7,7 @@ namespace TeamDeathmatch.TeamDeathmatchAPI
             Leading,   // Leading
             Losing,    // Losing
             Tied,      // Tied
-            MatchPoint,// MatchPoint
+            HitHard,// MatchPoint
             Victory,   // Victory
             Defeat     // Lost
         }
@@ -18,7 +18,7 @@ namespace TeamDeathmatch.TeamDeathmatchAPI
             public string LeadingClip { get; init; }
             public string LosingClip { get; init; }
             public string TiedClip { get; init; }
-            public string MatchPointClip { get; init; }
+            public string HitHardClip { get; init; }
             public string VictoryClip { get; init; }
             public string DefeatClip { get; init; }
 
@@ -27,7 +27,7 @@ namespace TeamDeathmatch.TeamDeathmatchAPI
                 TeamState.Leading    => LeadingClip,
                 TeamState.Losing     => LosingClip,
                 TeamState.Tied       => TiedClip,
-                TeamState.MatchPoint => MatchPointClip,
+                TeamState.HitHard    => HitHardClip,
                 TeamState.Victory    => VictoryClip,
                 TeamState.Defeat     => DefeatClip,
                 _ => null
