@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Exiled.API.Features;
-using TeamDeathmatchAPI;
+using TeamDeathmatch.TeamDeathmatchAPI;
 
 namespace TeamDeathmatch.Audio
 {

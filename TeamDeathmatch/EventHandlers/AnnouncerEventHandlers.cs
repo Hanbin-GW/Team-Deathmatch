@@ -6,7 +6,7 @@ using Exiled.API.Features;
 using MEC;
 using PlayerRoles;
 using TeamDeathmatch.Audio;
-using TeamDeathmatchAPI; // Use TeamState, TeamAudioProfile
+using TeamDeathmatch.TeamDeathmatchAPI; // Use TeamState, TeamAudioProfile
 
 namespace TeamDeathmatch.EventHandlers
 {
@@ -42,6 +42,8 @@ namespace TeamDeathmatch.EventHandlers
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "clocksticking.ogg"),  "Team2_ClockTick");
 
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "WinningReversal.ogg"), "Team1_WinningReversal");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "tf141", "tied141.ogg"), "Team1_Tied");
+            AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "LostLead141.ogg"),      "Team1_Losing");
             AudioClipStorage.LoadClip(Path.Combine(AudioDirectory, "Opfor", "TakenLead.ogg"), "Team2_WinningReversal");
         }
 

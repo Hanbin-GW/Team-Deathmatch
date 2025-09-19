@@ -1,4 +1,5 @@
-using TeamDeathmatchAPI;
+using TeamDeathmatch.TeamDeathmatchAPI;
+using TeamDeathmatch.TeamDeathmatchAPI;
 namespace TeamDeathmatch.Audio
 {
     /// <summary>
@@ -20,7 +21,7 @@ namespace TeamDeathmatch.Audio
                 API.TeamState.Leading    => LeadingClip,
                 API.TeamState.Losing     => LosingClip,
                 API.TeamState.Tied       => TiedClip,
-                API.TeamState.MatchPoint => MatchPointClip,
+                API.TeamState.HitHard => MatchPointClip,
                 API.TeamState.Victory    => VictoryClip,
                 API.TeamState.Defeat     => DefeatClip,
                 _ => null
