@@ -38,3 +38,4 @@
 /Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/System.ValueTuple.dll
 /Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/GhostPlugin-Eng.dll
 /Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/LabApi.dll
+/Users/hanbin/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/SharpCompress.dll

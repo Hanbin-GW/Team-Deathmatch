@@ -32,7 +32,7 @@ namespace TeamDeathmatch
         [YamlIgnore]
         public Dictionary<string, List<Vector3>> SurfaceRespawns { get; set; } = new()
         {
-            { "Team1", new List<Vector3> { new Vector3(125, 296, -41), new Vector3(130, 296, -30) } },
+            { "Team1", new List<Vector3> { new Vector3(125, 296, -41), new Vector3(130, 296, -40) } },
             { "Team2", new List<Vector3> { new Vector3(6, 292, -42), new Vector3(10, 292, -50) } }
         };
     }
