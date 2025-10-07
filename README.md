@@ -11,6 +11,9 @@ Developed with the **Exiled API** and **Unity’s C# scripting system**, this pl
 
 ---
 
+<img width="543" height="273" alt="image" src="https://github.com/user-attachments/assets/0ed6ad12-b317-4d2b-bb54-e070bda5525a" />
+
+---
 ## Features
 
 - **Automatic Team Balancing** — Players are evenly distributed between `Team1` and `Team2`.
