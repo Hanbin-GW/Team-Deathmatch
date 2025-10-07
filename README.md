@@ -4,7 +4,7 @@ A **fully customizable Team Deathmatch mode** for **SCP: Secret Laboratory** mul
 Developed with the **Exiled API** and **Unity’s C# scripting system**, this plugin introduces fast-paced, team-based combat by assigning players to two teams, distributing loadouts, handling deaths, and declaring winners based on scores.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-2.3.5-blue.svg">
+  <img src="https://img.shields.io/badge/Version-3.0.1-blue.svg">
   <img src="https://img.shields.io/badge/Status-Active-green.svg">
   <img src="https://img.shields.io/badge/Game-SCP:SL-9147ff.svg">
 </p>
