@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CustomPlayerEffects;
 using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -12,7 +11,6 @@ using PlayerRoles;
 using UnityEngine;
 using Exiled.Loader;
 using Exiled.CustomRoles.API.Features;
-using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Server;
 using GhostPlugin.API;
 using GhostPlugin.Custom.Roles.Chaos;
@@ -697,7 +695,8 @@ namespace TeamDeathmatch
             AnnouncerEventHandlers = new AnnouncerEventHandlers();
             AnnouncerEventHandlers.Plugin = this;
             //AnnouncerEventHandlers.EnsureMusicDirectoryExists();
-            LoadTeamRoles();
+            Log.Send("[TDM] The Roles will register in TDM soon...", LogLevel.Info, ConsoleColor.Red);
+            Timing.CallDelayed(15f,LoadTeamRoles);
             AnnouncerEventHandlers.OnPluginLoad();
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStarted;
             Exiled.Events.Handlers.Server.RoundStarted += AnnouncerEventHandlers.OnRoundStarted;
@@ -721,8 +720,8 @@ namespace TeamDeathmatch
             Exiled.Events.Handlers.Player.Left -= OnLeft;
             Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawningTeam;
             Instance = null;
-            AnnouncerEventHandlers = null;
             AnnouncerEventHandlers.Plugin = null;
+            AnnouncerEventHandlers = null;
             base.OnDisabled();
         }
     }
