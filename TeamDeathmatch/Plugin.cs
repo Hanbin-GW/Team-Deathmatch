@@ -21,6 +21,8 @@ using Interactables.Interobjects.DoorUtils;
 using HintServiceMeow.Core.Enum;
 using HintServiceMeow.Core.Utilities;
 using HintServiceMeow.UI.Utilities;
+using RueI.API;
+using RueI.API.Elements;
 using TeamDeathmatch.EventHandlers;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
@@ -43,6 +45,18 @@ namespace TeamDeathmatch
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
         {
+            
+            //TestDisplay
+            RueDisplay display = RueDisplay.Get(ev.Player);
+            Tag welcomeTag = new();
+            display.Show(welcomeTag, new BasicElement(800, "Welcome to the Ghost TDM server!"));
+            display.Show(new BasicElement(300, "Don't forget to read the rules!"), 10f);
+            Timing.CallDelayed(5f, () =>
+            {
+                display.Show(welcomeTag, new BasicElement(800, "New update: We added support for multiple hints at once!"), 10f);
+            });
+            
+            
             Hint hint = new Hint()
             {
                 Text = "Ghost Server [Team Death Match]",

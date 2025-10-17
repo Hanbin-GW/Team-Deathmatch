@@ -1,0 +1,192 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 112.0,
+		"history":
+		[
+			"test.py",
+			"python3 test.py"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/Plugin.cs",
+		"/Users/hanbinkim/SynologyDrive/ghost_world_3rd_rework/bot.py",
+		"/Users/hanbinkim/Documents/scpsl guide/color_ansi.py",
+		"/Users/hanbinkim/Documents/scpsl guide/config.py",
+		"/Users/hanbinkim/Documents/scpsl guide/bot.py",
+		"/Users/hanbinkim/SynologyDrive/ghosty/ghosty/output.log",
+		"/Users/hanbinkim/Downloads/voice.py",
+		"/Users/hanbinkim/Documents/alpha1/alpha.py",
+		"/Users/hanbinkim/Documents/Ghost_World(scrapped)/config.py",
+		"/Users/hanbinkim/Documents/alpha1/alpha emergency.py",
+		"/Users/hanbinkim/Documents/ghosty/archive-2023-08-04T011953-0400/ghosty_rework.py",
+		"/Users/hanbinkim/Documents/ghosty/archive-2023-08-04T011953-0400/color_ansi.py",
+		"/Users/hanbinkim/Downloads/scpsl database 복사본/scpsl-data/data_rework/weapon_rework.py",
+		"/Users/hanbinkim/Downloads/nodeex.py",
+		"/Users/hanbinkim/Downloads/test.py",
+		"/Users/hanbinkim/Documents/ghosty/ghost_gpt-main/ghosty_rework.py",
+		"/Users/hanbinkim/Documents/ghosty/archive-2023-08-04T011953-0400/config/config.py",
+		"/Users/hanbinkim/Desktop/django/mysite/manage.py",
+		"/Users/hanbinkim/Desktop/django/mysite/mysite/settings.py",
+		"/Users/hanbinkim/Documents/scpslDB/scpsl database/scpsl-data/data_rework/weapon_rework.py",
+		"/Users/hanbinkim/Desktop/hanbin.html"
+	],
+	"find":
+	{
+		"height": 0.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "TeamDeathmatch.sublime-project",
+	"replace":
+	{
+		"height": 68.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
