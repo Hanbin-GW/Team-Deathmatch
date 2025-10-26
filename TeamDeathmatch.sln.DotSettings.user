@@ -41,4 +41,5 @@
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">ERROR</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
   &lt;Assembly Path="/Users/hanbin/Documents/LabAPI/Assembly-CSharp.dll" /&gt;
+  &lt;Assembly Path="/Users/hanbinkim/RiderProjects/TeamDeathmatch/packages/ExMod.Exiled.9.10.0/lib/net48/Assembly-CSharp-Publicized.dll" /&gt;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

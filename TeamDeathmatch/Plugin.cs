@@ -30,7 +30,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(3, 0, 2);
+        public override Version Version { get; } = new Version(3, 1, 0);
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
@@ -43,18 +43,6 @@ namespace TeamDeathmatch
         public override PluginPriority Priority { get; } = PluginPriority.Lowest;
         private void OnVerified(VerifiedEventArgs ev)
         {
-            
-            //TestDisplay
-            RueDisplay display = RueDisplay.Get(ev.Player);
-            Tag welcomeTag = new();
-            display.Show(welcomeTag, new BasicElement(800, "Welcome to the Ghost TDM server!"));
-            display.Show(new BasicElement(300, "Don't forget to read the rules!"), 10f);
-            Timing.CallDelayed(5f, () =>
-            {
-                display.Show(welcomeTag, new BasicElement(800, "New update: We added support for multiple hints at once!"), 10f);
-            });
-            
-            
             Hint hint = new Hint()
             {
                 Text = "Ghost Server [Team Death Match]",
@@ -69,7 +57,7 @@ namespace TeamDeathmatch
                 if (!WaitingPlayers.Contains(ev.Player))
                     WaitingPlayers.Add(ev.Player);
 
-                ev.Player.Broadcast(5, $"TDM 대기 중... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
+                ev.Player.Broadcast(5, $"Waiting TDM... ({WaitingPlayers.Count}/{Config.TeamSize * 2})");
 
                 if (WaitingPlayers.Count >= Config.TeamSize * 2)
                     StartTdm();
@@ -128,7 +116,7 @@ namespace TeamDeathmatch
 
                 selected.AddRole(player);
                 var ui = PlayerUI.Get(player);
-                ui.CommonHint.ShowRoleHint(selected.Name, new[] { $"{selected.Description}", $"You have CustomAbilitis: {selected.CustomAbilities.ToString()}" });
+                ui.CommonHint.ShowRoleHint(selected.Name, new[] { $"{selected.Description}", $"You have CustomAbilities: {selected.CustomAbilities.ToString()}" });
                 return true;
             }
             catch (Exception ex)
@@ -421,6 +409,15 @@ namespace TeamDeathmatch
 
             foreach (var p in Player.List)
             {
+                //TestDisplay
+                RueDisplay display = RueDisplay.Get(p);
+                Tag welcomeTag = new();
+                display.Show(welcomeTag, new BasicElement(900, "Welcome to the Ghost TDM server!"));
+                display.Show(new BasicElement(300, "Don't forget to read the rules!"), 10f);
+                Timing.CallDelayed(5f, () =>
+                {
+                    display.Show(welcomeTag, new BasicElement(800, "New update: We added support for multiple hints at once!"), 10f);
+                });
                 if (p.Role.Team is Team.FoundationForces or Team.ChaosInsurgency)
                 {
                     WaitingPlayers.Add(p);
