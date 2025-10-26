@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CustomPlayerEffects;
 using Discord;
 using Exiled.API.Enums;
 using Exiled.API.Features;
@@ -29,7 +28,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(3, 0, 0,800);
+        public override Version Version { get; } = new Version(3, 1, 0);
         private DateTime matchStartTime;
         public readonly List<CoroutineHandle> AudioTimers = new();
         public Dictionary<Player, string> playerTeams = new();
@@ -133,7 +132,7 @@ namespace TeamDeathmatch
 
                 selected.AddRole(player);
                 var ui = PlayerUI.Get(player);
-                ui.CommonHint.ShowRoleHint(selected.Name, new[] { $"{selected.Description}", $"You have CustomAbilitis: {selected.CustomAbilities.ToString()}" });
+                ui.CommonHint.ShowRoleHint(selected.Name, new[] { $"{selected.Description}", $"You have CustomAbilities: {selected.CustomAbilities.ToString()}" });
                 return true;
             }
             catch (Exception ex)
