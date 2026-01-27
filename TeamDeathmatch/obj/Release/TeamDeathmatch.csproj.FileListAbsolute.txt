@@ -42,7 +42,6 @@
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/TeamDeathmatch.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/TeamDeathmatch.pdb
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/Assembly-CSharp-firstpass.dll
-/Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/Assembly-CSharp.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/AudioPlayerApi.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/CommandSystem.Core.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/Exiled.API.dll
@@ -58,7 +57,6 @@
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/Mirror.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/NorthwoodLib.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/NVorbis.dll
-/Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/RueI.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/SharpCompress.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/System.Buffers.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/System.Memory.dll
@@ -82,3 +80,4 @@
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/obj/Release/TeamDeathmatch.csproj.CopyComplete
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/obj/Release/TeamDeathmatch.dll
 /Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/obj/Release/TeamDeathmatch.pdb
+/Users/hanbinkim/RiderProjects/TeamDeathmatch/TeamDeathmatch/bin/Release/UnityEngine.AnimationModule.dll
