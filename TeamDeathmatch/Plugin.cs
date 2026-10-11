@@ -28,7 +28,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(3, 1, 1);
+        public override Version Version { get; } = new Version(3, 1, 0);
         private DateTime matchStartTime;
         public readonly List<CoroutineHandle> AudioTimers = new();
         public Dictionary<Player, string> playerTeams = new();
