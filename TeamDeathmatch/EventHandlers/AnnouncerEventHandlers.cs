@@ -79,6 +79,15 @@ namespace TeamDeathmatch.EventHandlers
                 Directory.CreateDirectory(tf141Path);
             }
         }
+        
+        /// <summary>
+        /// 상태 캐시 초기화 (TDM 시작 시점에 호출)
+        /// </summary>
+        public void ResetTeamStateCache()
+        {
+            _lastTeamState.Clear();
+            Log.Debug("[Announcer] TeamState cache reset.");
+        }
 
         private void InitTeamAudioProfiles()
         {
@@ -131,7 +140,7 @@ namespace TeamDeathmatch.EventHandlers
         }
 
         // ----- Situation playback (only when status changes) -----
-        private void PlayTeamStateAudio(string teamName, API.TeamState state)
+        public void PlayTeamStateAudio(string teamName, API.TeamState state)
         {
             if (!_teamProfiles.TryGetValue(teamName, out var profile))
                 return;

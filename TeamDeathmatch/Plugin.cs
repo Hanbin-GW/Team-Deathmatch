@@ -30,7 +30,7 @@ namespace TeamDeathmatch
     {
         public override string Name => "Team deathmatch";
         public override string Author => "Hanbin-GW";
-        public override Version Version { get; } = new Version(3, 2, 0);
+        public override Version Version { get; } = new Version(3, 2, 1);
         public Dictionary<Player, string> playerTeams = new();
         public List<Player> WaitingPlayers = new();
         public bool TdmStarted = false;
@@ -289,26 +289,26 @@ namespace TeamDeathmatch
                     // 리드/루징/동점
                     if (TeamScores["Team1"] > TeamScores["Team2"])
                     {
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Leading);
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Losing);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", DeathmatchAPI.API.TeamState.Leading);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", DeathmatchAPI.API.TeamState.Losing);
                     }
                     else if (TeamScores["Team2"] > TeamScores["Team1"])
                     {
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Leading);
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Losing);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", DeathmatchAPI.API.TeamState.Leading);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", DeathmatchAPI.API.TeamState.Losing);
                     }
                     else
                     {
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.Tied);
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.Tied);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", DeathmatchAPI.API.TeamState.Tied);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", DeathmatchAPI.API.TeamState.Tied);
                     }
 
                     // 매치포인트(승점 1 남음)
                     int target = Instance.Config.TeamScoreToWin;
                     if (TeamScores["Team1"] == target - 5)
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", TeamDeathmatchAPI.API.TeamState.HitHard);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team1", DeathmatchAPI.API.TeamState.HitHard);
                     if (TeamScores["Team2"] == target - 5)
-                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", TeamDeathmatchAPI.API.TeamState.HitHard);
+                        AnnouncerEventHandlers.PlayTeamStateAudio("Team2", DeathmatchAPI.API.TeamState.HitHard);
 
                     // ── B) 리버설(선두 바뀜) 감지 & 3초 안정화 후 확정 ─────────────
                     string currentLeadingTeam =
@@ -352,9 +352,9 @@ namespace TeamDeathmatch
                     {
                         // 상태 기반 승/패 음성
                         AnnouncerEventHandlers.PlayTeamStateAudio(attackerTeam,
-                            TeamDeathmatchAPI.API.TeamState.Victory);
+                            DeathmatchAPI.API.TeamState.Victory);
                         string loser = attackerTeam == "Team1" ? "Team2" : "Team1";
-                        AnnouncerEventHandlers.PlayTeamStateAudio(loser, TeamDeathmatchAPI.API.TeamState.Defeat);
+                        AnnouncerEventHandlers.PlayTeamStateAudio(loser, DeathmatchAPI.API.TeamState.Defeat);
 
                         EndTdm(attackerTeam);
                         return;

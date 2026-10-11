@@ -9,6 +9,7 @@ namespace TeamDeathmatch.DeathmatchAPI
             Tied,      // Tied
             MatchPoint,// MatchPoint
             Victory,   // Victory
+            HitHard,
             Defeat     // Lost
         }
         
