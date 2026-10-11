@@ -1,3 +1,5 @@
 /TeamDeathmatch/obj/
 /TeamDeathmatch/bin/
 .DS_Store
+**/bin/
+**/obj/
