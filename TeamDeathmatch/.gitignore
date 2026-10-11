@@ -1,5 +1,6 @@
-/TeamDeathmatch/obj/
-/TeamDeathmatch/bin/
+# macOS
 .DS_Store
+
+# C# / .NET build files
 **/bin/
 **/obj/
