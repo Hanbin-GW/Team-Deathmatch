@@ -1,39 +1,39 @@
 using System;
 using System.Collections.Generic;
 using Exiled.API.Features;
-using TeamDeathmatch.TeamDeathmatchAPI;
+using TeamDeathmatch.DeathmatchAPI;
 
 namespace TeamDeathmatch.Audio
 {
     public static class AudioManager
     {
         private static readonly Dictionary<string, AudioPlayer> _teamPlayers = new();
-        private static readonly Dictionary<string, API.TeamAudioProfile> _teamProfiles = new();
+        private static readonly Dictionary<string, TeamAudioProfile> _teamProfiles = new();
         private static readonly Dictionary<string, API.TeamState> _lastTeamState = new();
 
         public static void InitTeamAudioProfiles()
         {
-            _teamProfiles["Team1"] = new API.TeamAudioProfile
+            _teamProfiles["Team1"] = new TeamAudioProfile
             {
                 LeadingClip     = "MTF_LEADING",
                 LosingClip      = "MTF_LOSING",
                 TiedClip        = "MTF_TIED",
-                HitHardClip     = "MTF_MATCH_POINT",
+                MatchPointClip  = "MTF_MATCH_POINT",
                 VictoryClip     = "MTF_VICTORY",
                 DefeatClip      = "MTF_DEFEAT",
             };
-            _teamProfiles["Team2"] = new API.TeamAudioProfile
+            _teamProfiles["Team2"] = new TeamAudioProfile
             {
                 LeadingClip     = "CI_LEADING",
                 LosingClip      = "CI_LOSING",
                 TiedClip        = "CI_TIED",
-                HitHardClip     = "CI_MATCH_POINT",
+                MatchPointClip  = "CI_MATCH_POINT",
                 VictoryClip     = "CI_VICTORY",
                 DefeatClip      = "CI_DEFEAT",
             };
         }
 
-        private static AudioPlayer EnsureTeamPlayer(string teamName)
+        /*private static AudioPlayer EnsureTeamPlayer(string teamName)
         {
             if (_teamPlayers.TryGetValue(teamName, out var p)) return p;
 
@@ -53,6 +53,6 @@ namespace TeamDeathmatch.Audio
             );
             _teamPlayers[teamName] = player;
             return player;
-        }
+        }*/
     }
 }
