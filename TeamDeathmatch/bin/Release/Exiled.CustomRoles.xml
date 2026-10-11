@@ -262,6 +262,16 @@
             <returns>True if the ability exists.</returns>
             <exception cref="T:System.ArgumentNullException">If the name is <see langword="null"/> or an empty string.</exception>
         </member>
+        <member name="M:Exiled.CustomRoles.API.Features.CustomAbility.RegisterAbilities(System.Boolean)">
+            <summary>
+            Registers all the <see cref="T:Exiled.CustomRoles.API.Features.CustomAbility"/>'s present in the current assembly.
+            </summary>
+            <param name="byAttribute">Whether to register by attribute.</param>
+            <returns>A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:Exiled.CustomRoles.API.Features.CustomAbility"/> which contains all registered <see cref="T:Exiled.CustomRoles.API.Features.CustomAbility"/>'s.</returns>
+            <remarks>
+            This is just a dumbed down version of <see cref="M:Exiled.CustomRoles.API.Features.CustomAbility.RegisterAbilities(System.Boolean,System.Object)"/> for QoL, if you actually use <see cref="T:Exiled.API.Features.Attributes.CustomAbilityAttribute"/>, do not use this overload.
+            </remarks>
+        </member>
         <member name="M:Exiled.CustomRoles.API.Features.CustomAbility.RegisterAbilities(System.Boolean,System.Object)">
             <summary>
             Registers all the <see cref="T:Exiled.CustomRoles.API.Features.CustomAbility"/>'s present in the current assembly.
@@ -430,6 +440,11 @@
             Gets or sets the possible spawn locations for this role.
             </summary>
         </member>
+        <member name="P:Exiled.CustomRoles.API.Features.CustomRole.MinPlayers">
+            <summary>
+            Gets or sets the minimum number of players connected needed in order to add the role.
+            </summary>
+        </member>
         <member name="P:Exiled.CustomRoles.API.Features.CustomRole.KeepPositionOnSpawn">
             <summary>
             Gets or sets a value indicating whether players keep their current position when gaining this role.
@@ -561,6 +576,16 @@
             <returns>True if the player has custom roles.</returns>
             <exception cref="T:System.ArgumentNullException">If the player is <see langword="null"/>.</exception>
         </member>
+        <member name="M:Exiled.CustomRoles.API.Features.CustomRole.RegisterRoles(System.Boolean)">
+            <summary>
+            Registers all the <see cref="T:Exiled.CustomRoles.API.Features.CustomRole"/>'s present in the current assembly.
+            </summary>
+            <param name="byAttribute">Whether to register by attribute.</param>
+            <returns>A <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:Exiled.CustomRoles.API.Features.CustomRole"/> which contains all registered <see cref="T:Exiled.CustomRoles.API.Features.CustomRole"/>'s.</returns>
+            <remarks>
+            This is just a dumbed down version of <see cref="M:Exiled.CustomRoles.API.Features.CustomRole.RegisterRoles(System.Boolean,System.Object)"/> for QoL, if you actually use <see cref="T:Exiled.API.Features.Attributes.CustomRoleAttribute"/>, do not use this overload.
+            </remarks>
+        </member>
         <member name="M:Exiled.CustomRoles.API.Features.CustomRole.RegisterRoles(System.Boolean,System.Object)">
             <summary>
             Registers all the <see cref="T:Exiled.CustomRoles.API.Features.CustomRole"/>'s present in the current assembly.
@@ -690,6 +715,12 @@
             <param name="ffRules"> Roles to add with friendly fire values. </param>
             <param name="overwrite"> Whether to overwrite current values if they exist. </param>
             <returns> Whether the item was able to be added. </returns>
+        </member>
+        <member name="M:Exiled.CustomRoles.API.Features.CustomRole.ToString">
+            <summary>
+            Returns the CustomRole in a human-readable format.
+            </summary>
+            <returns>A string containing CustomRole-related data.</returns>
         </member>
         <member name="M:Exiled.CustomRoles.API.Features.CustomRole.TryRegister">
             <summary>
@@ -903,6 +934,28 @@
             <summary>
             The base class for passive (always active) abilities.
             </summary>
+        </member>
+        <member name="T:Exiled.CustomRoles.Commands.Get">
+            <summary>
+            The command to get specified player(s) current custom roles.
+            </summary>
+        </member>
+        <member name="P:Exiled.CustomRoles.Commands.Get.Instance">
+            <summary>
+            Gets the <see cref="T:Exiled.CustomRoles.Commands.Get"/> command instance.
+            </summary>
+        </member>
+        <member name="P:Exiled.CustomRoles.Commands.Get.Command">
+            <inheritdoc/>
+        </member>
+        <member name="P:Exiled.CustomRoles.Commands.Get.Aliases">
+            <inheritdoc/>
+        </member>
+        <member name="P:Exiled.CustomRoles.Commands.Get.Description">
+            <inheritdoc/>
+        </member>
+        <member name="M:Exiled.CustomRoles.Commands.Get.Execute(System.ArraySegment{System.String},CommandSystem.ICommandSender,System.String@)">
+            <inheritdoc/>
         </member>
         <member name="T:Exiled.CustomRoles.Commands.Give">
             <summary>
